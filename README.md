@@ -1,4 +1,4 @@
-# ![P.S. FTP Logo](icon.png) P.S. FTP
+# ![P.S. FTP Logo](https://github.com/calebgray/psftp/raw/master/icon.png) P.S. FTP
 ## Portable. Secure. FTP.
 Drag and drop files/folders to `psftp` then paste the `ftp://` link in your clipboard wherever pleases you.
 
