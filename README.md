@@ -11,7 +11,7 @@ Simply execute `psftp -psftpme` from the CLI, or enable it from the GUI.
 | Off   | Halfway | On    | Retrying |
 | :---: | :---:   | :---: | :---:    |
 | ◇     | ◈      | ◆     | ◢ ◣ ◤ ◥ |
- 
+
 ### Features
 * [X] Portable and Secure FTP Server
 * [X] System/Notification Tray/Icon
@@ -20,7 +20,8 @@ Simply execute `psftp -psftpme` from the CLI, or enable it from the GUI.
 * [X] Config File
 * [X] Retries and Timeouts
 * [X] psftp.me Integration
-* [ ] Automatic Builds
+* [X] Automatic Builds
+* [ ] Versioning
 * [ ] Auto-Update
 * [ ] Release Candidate(s)
 * [ ] Release First Stable Version
