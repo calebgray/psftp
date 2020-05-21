@@ -31,9 +31,7 @@ jobs:
         fi
 
     - name: Install Native Dependencies
-      uses: ryankurte/action-apt@v0.1.0
-      with:
-        packages: libgtk-3-dev
+      run: sudo apt-get install libgtk-3-dev libappindicator3-dev
 
     - name: Build
       run: go build -v .
