@@ -7,63 +7,28 @@ on:
     branches: [ master ]
 
 jobs:
-  build-linux-386:
-    name: linux-386
+  build-windows-386:
+    name: windows-386
     runs-on: ubuntu-latest
     steps:
-      - name: install native deps
-        run: sudo apt-get install libgtk-3-dev libappindicator3-dev
       - uses: actions/checkout@master
       - name: compile and release
-        uses: ngs/go-release.action@v1.0.1
+        uses: ngs/go-release.action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GOARCH: 386
-          GOOS: linux
+          GOOS: windows
           EXTRA_FILES: "README.md"
 
-  build-linux-amd64:
-    name: linux-amd64
+  build-windows-amd64:
+    name: windows-amd64
     runs-on: ubuntu-latest
     steps:
-      - name: install native deps
-        run: sudo apt-get install libgtk-3-dev libappindicator3-dev
       - uses: actions/checkout@master
       - name: compile and release
-        uses: ngs/go-release.action@v1.0.1
+        uses: ngs/go-release.action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GOARCH: amd64
-          GOOS: linux
+          GOOS: windows
           EXTRA_FILES: "README.md"
-
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    steps:
-
-    - name: Setup Go 1.14
-      uses: actions/setup-go@master
-      with:
-        go-version: ^1.14
-      id: go
-
-    - name: Checkout Code
-      uses: actions/checkout@master
-
-    - name: Get Go Dependencies
-      run: |
-        go get -v -t -d ./...
-        if [ -f Gopkg.toml ]; then
-            curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-            dep ensure
-        fi
-
-    - name: Install Native Dependencies
-      run: sudo apt-get install libgtk-3-dev libappindicator3-dev
-
-    - name: Build
-      run: go build -v .
-
-    - name: Test
-      run: go test -v .
