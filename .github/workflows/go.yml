@@ -11,6 +11,9 @@ jobs:
     name: windows-386
     runs-on: ubuntu-latest
     steps:
+      - name: Get the Date
+        id: date
+        run: echo '::set-output name=date::$(date +%Y.%m.%d)'
       - uses: actions/checkout@master
       - name: compile and release
         uses: ngs/go-release.action@master
@@ -20,11 +23,15 @@ jobs:
           GOOS: windows
           EXTRA_FILES: "README.md"
           PROJECT_NAME: "psftp"
+          RELEASE_NAME: ${{steps.date.outputs.date}}
 
   build-windows-amd64:
     name: windows-amd64
     runs-on: ubuntu-latest
     steps:
+      - name: Get the Date
+        id: date
+        run: echo '::set-output name=date::$(date +%Y.%m.%d)'
       - uses: actions/checkout@master
       - name: compile and release
         uses: ngs/go-release.action@master
@@ -34,3 +41,4 @@ jobs:
           GOOS: windows
           EXTRA_FILES: "README.md"
           PROJECT_NAME: "psftp"
+          RELEASE_NAME: "${{steps.date.outputs.date}}"
