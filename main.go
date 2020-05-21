@@ -18,95 +18,207 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
 const AppTitle = "P.S. FTP"
 
-var AutoQuitTitle = map[bool]string {
-	false: "[ ] Automatically Quit",
-	true:  "[X] Automatically Quit",
+// TODO: Display All Addrs on Systray
+// TODO: Data Views
+// TODO: https://github.com/jessevdk/go-flags
+
+var statusRunes = strings.Split("◇◈◆", "")
+var spinnerRunes = strings.Split("◢◣◤◥", "")
+
+var AutoQuitTitle = map[bool]string{
+	false: statusRunes[0] + " Automatically Quit",
+	true:  statusRunes[2] + " Automatically Quit",
 }
 
 var Verbose *bool
+var VeryVerbose *bool
 var AutoQuit *bool
+var PsFtpMe *bool
+var PsFtpMeAddress *string
+var ConfigPath *string
 
 var User string
 var Pass string
 var Filename string
 var ZipFile string
+var ZipFileStat os.FileInfo
+var ZipFileReady = make(chan bool, 1)
+var PublicFtpURI string
+var PrivateFtpURI string
 var FtpURI string
+
+var PsFtpMeConn net.Conn
 
 var SortedFilenames []string
 
-func onReady() {
+func generateURI(hostname string, port int) string {
+	// Put Together as Friendly of a URI as We're Able
+	strPort := ""
+	if port != 21 {
+		strPort = ":" + strconv.Itoa(port)
+	}
+	return fmt.Sprint("ftp://" + User + ":" + Pass + "@" + hostname + strPort + "/" + Filename)
+}
+
+func saveConfig() {
+	// Serialize...
+	if configJson, err := json.MarshalIndent(map[string]interface{}{
+		"autoQuit":       *AutoQuit,
+		"psftpme":        *PsFtpMe,
+		"psftpmeAddress": *PsFtpMeAddress,
+	}, "", "\t"); err != nil {
+		log.Println(err.Error())
+	} else {
+		// ... Write to Disk!
+		if err = ioutil.WriteFile(*ConfigPath, configJson, 0644); err != nil {
+			log.Println(err.Error())
+		}
+	}
+}
+
+var lastPsFtpMeTitle string
+
+func refreshPsFtpMeTitle(menuItem *systray.MenuItem) {
+	// Only Update the Menu When There's New Text
+	currentPsFtpMeTitle := getPsFtpMeTitle()
+	if currentPsFtpMeTitle != lastPsFtpMeTitle {
+		_ = menuItem.SetTitle(currentPsFtpMeTitle)
+		lastPsFtpMeTitle = currentPsFtpMeTitle
+	}
+}
+
+func systrayBegin() {
+	// Build the System Tray
 	if systray.SetIcon(Icon) != nil {
 		return
 	}
-	systray.SetTitle(AppTitle)
-	systray.SetTooltip(AppTitle + " (" + strings.Join(SortedFilenames, ", ") + ")")
+	_ = systray.SetTitle(AppTitle)
+	_ = systray.SetTooltip(AppTitle + " (" + strings.Join(SortedFilenames, ", ") + ")")
 
+	// Start with Files
 	for _, filename := range SortedFilenames {
-		systray.AddMenuItem(filename, "", 0).Disable()
+		_ = systray.AddMenuItem(filename, "", 0).Disable()
 	}
 	systray.AddSeparator()
+
+	// psftp.me, Auto-Quit
+	menuPsFtpMe := systray.AddMenuItem(getPsFtpMeTitle(), "Generates a disposable Internet accessible link!", 0)
 	menuAutoQuit := systray.AddMenuItem(AutoQuitTitle[*AutoQuit], "Automatically quits P.S. FTP after the next successful download.", 0)
 	systray.AddSeparator()
+
+	// Copy to Clipboard
 	menuCopy := systray.AddMenuItem("Copy to Clipboard", "Copies the link to your clipboard.", 0)
 	systray.AddSeparator()
+
+	// Don't Quit!
 	menuQuit := systray.AddMenuItem("Quit", "P.S. FTP Never Quits!", 0)
 
+	// Events-in-a-Thread
 	go func() {
 		for {
 			select {
+			case <-time.After(333 * time.Millisecond):
+				// Refresh...
+				refreshPsFtpMeTitle(menuPsFtpMe)
+			case <-menuPsFtpMe.OnClickCh():
+				// Toggle!
+				if *PsFtpMe {
+					stopPsFtpMe()
+				} else {
+					startPsFtpMe()
+				}
+				_ = clipboard.WriteAll(FtpURI)
+				refreshPsFtpMeTitle(menuPsFtpMe)
+				saveConfig()
 			case <-menuAutoQuit.OnClickCh():
+				// Auto-Quit!?
 				*AutoQuit = !*AutoQuit
-				menuAutoQuit.SetTitle(AutoQuitTitle[*AutoQuit])
-				break
+				_ = menuAutoQuit.SetTitle(AutoQuitTitle[*AutoQuit])
+				saveConfig()
 			case <-menuCopy.OnClickCh():
-				clipboard.WriteAll(FtpURI)
-				break
+				// Copy!
+				_ = clipboard.WriteAll(FtpURI)
 			case <-menuQuit.OnClickCh():
-				systray.Quit()
-				break
+				// Quit!
+				_ = systray.Quit()
 			}
 		}
 	}()
 }
 
-func onExit() {
+func systrayExit() {
+	// Attempt to Clean Up
+	_ = os.Remove(ZipFile)
+
+	// Clean Exit
 	os.Exit(0)
 }
 
 func tryStartServer(hostname string, port int) {
-	// Generate the FTP URI
-	FtpURI = fmt.Sprint("ftp://" + User + ":" + Pass + "@" + hostname + ":" + strconv.Itoa(port) + "/" + Filename)
-	clipboard.WriteAll(FtpURI)
+	// Generate the FTP URI's
+	PrivateFtpURI = generateURI(hostname, port)
+	psFtpMePortPosition := strings.LastIndexByte(*PsFtpMeAddress, ':')
+	psFtpMePort, _ := strconv.Atoi((*PsFtpMeAddress)[psFtpMePortPosition+1:])
+	PublicFtpURI = generateURI((*PsFtpMeAddress)[:psFtpMePortPosition], psFtpMePort)
+	if *PsFtpMe {
+		startPsFtpMe()
+	} else {
+		stopPsFtpMe()
+	}
+	_ = clipboard.WriteAll(FtpURI)
 
 	// (Attempt to) Start the Server
 	_ = graval.NewFTPServer(&graval.FTPServerOpts{
 		Factory:    &PSFTPDriverFactory{},
-		ServerName: "Prier",
+		ServerName: "psftp",
 		Hostname:   hostname,
 		Port:       port,
 	}).ListenAndServe()
 }
 
-type Config struct {
-	AutoQuit bool `json:"autoQuit"`
+func evaluateConfigBool(config map[string]interface{}, name string, fallback bool) bool {
+	if raw, exists := config[name]; exists {
+		if value, ok := raw.(bool); ok {
+			return value
+		}
+	}
+	return fallback
+}
+
+func evaluateConfigString(config map[string]interface{}, name string, fallback string) string {
+	if raw, exists := config[name]; exists {
+		if value, ok := raw.(string); ok {
+			return value
+		}
+	}
+	return fallback
 }
 
 func main() {
 	// Run the OS Shim!
 	Shim()
 
+	// Setup Logging
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
 	// Parse Command Line Flags
 	flag.Usage = func() {
-		_, _ = fmt.Fprintln(flag.CommandLine.Output(), "Usage: ", path.Base(os.Args[0]), " [-flags] <filenames...>")
+		log.Println("Usage: ", path.Base(os.Args[0]), " [-flags] <filenames...>")
 		flag.PrintDefaults()
 	}
 	Verbose = flag.Bool("v", false, "whisper sweet nothings aloud")
+	VeryVerbose = flag.Bool("vv", false, "grab a loudspeaker while you're at it")
 	AutoQuit = flag.Bool("autoQuit", true, "automatically quit after a successful download")
+	PsFtpMe = flag.Bool("psftpme", false, "generate a (temporary but) Internet accessible URI to your files")
+	PsFtpMeAddress = flag.String("psftpmeAddress", "psftp.me:21", "point to a different psftp.me server")
+	configDisabled := flag.Bool("noconfig", false, "disable the config file")
+	ConfigPath = flag.String("config", "psftp.json", "path to config file")
 	listeners := flag.String("listeners", "", "comma separated list of addresses (hostname or ip) to bind with an FTP server")
 	blacklist := flag.String("blacklist", "^127.,^169.", "comma separated list of prefixes (starts with ^), matches, or suffixes (ends with $) to blacklist")
 	tempDir := flag.String("tempDir", "/tmp", "temporary storage")
@@ -117,21 +229,28 @@ func main() {
 	ipv6 := flag.Bool("ipv6", false, "listen to ipv6 addresses")
 	flag.Parse()
 
+	// Pre-Process Flags/Commands
+	if *VeryVerbose {
+		*Verbose = true
+	}
+
 	// Config File?
-	configFile, err := os.Open("psftp.json")
-	if *Verbose && err != nil {
-		// Error Reading Config...
-		_, _ = fmt.Fprintln(flag.CommandLine.Output(), err)
-	} else {
-		// Read Config File
-		data, _ := ioutil.ReadAll(configFile)
-		var config Config
-		json.Unmarshal(data, &config)
-		configFile.Close()
-		if config.AutoQuit {
-			println("YES")
+	if !*configDisabled && len(*ConfigPath) > 0 {
+		configFile, err := os.Open(*ConfigPath)
+		if *Verbose && err != nil {
+			// Error Reading Config...
+			log.Println(err.Error())
 		} else {
-			println("NO")
+			// Read Config File
+			data, _ := ioutil.ReadAll(configFile)
+			var config map[string]interface{}
+			_ = json.Unmarshal(data, &config)
+			_ = configFile.Close()
+
+			// Parsed Config Values Override Command Line Arguments
+			*AutoQuit = evaluateConfigBool(config, "autoQuit", *AutoQuit)
+			*PsFtpMe = evaluateConfigBool(config, "psftpme", *PsFtpMe)
+			*PsFtpMeAddress = evaluateConfigString(config, "psftpmeAddress", *PsFtpMeAddress)
 		}
 	}
 
@@ -163,23 +282,30 @@ func main() {
 	User = User[:21]
 
 	// Create the Zip
-	ZipFile = path.Join(*tempDir, "psftp."+User+"."+Pass+"."+Filename)
-	if *Verbose {
-		_, _ = fmt.Fprintln(flag.CommandLine.Output(), "Temporary File: ", ZipFile)
-	}
-	_ = os.Remove(ZipFile)
-	err = archiver.Archive(SortedFilenames, ZipFile)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer os.Remove(ZipFile)
+	go func() {
+		ZipFile = path.Join(*tempDir, "psftp."+User+"."+Pass+"."+Filename)
+		if *VeryVerbose {
+			log.Println("Temporary File: ", ZipFile)
+		}
+		_ = os.Remove(ZipFile)
+		err := archiver.Archive(SortedFilenames, ZipFile)
+		if err != nil {
+			log.Fatal(err)
+		}
+		ZipFileStat, err = os.Stat(ZipFile)
+		if err != nil {
+			log.Fatal(err)
+		}
+		ZipFileReady <- true
+	}()
 
-	// Bind to Public Addresses
+	// Determine Bind Addresses
 	var addresses []string
 	if len(*listeners) > 0 {
+		// Parse Command Line!
 		addresses = strings.Split(*listeners, ",")
 	} else {
-		// Auto-Detect Addresses
+		// Auto-Detect Addresses!
 		addrs, err := net.InterfaceAddrs()
 		if err != nil {
 			addresses = []string{"::"}
@@ -191,13 +317,16 @@ func main() {
 			}
 		}
 	}
+
+	// Time to Start the Server(s)
+	var wg sync.WaitGroup
 	for _, address := range addresses {
 		// Let's Filter Some Addresses...
 		if strings.Contains(address, "::") {
 			// IPv6 Disabled?
 			if !*ipv6 {
-				if *Verbose {
-					_, _ = fmt.Fprint(flag.CommandLine.Output(), "Skipping IPv6: ", address, "\n")
+				if *VeryVerbose {
+					log.Println("Skipping IPv6: ", address)
 				}
 				goto NextAddress
 			}
@@ -206,39 +335,41 @@ func main() {
 			for _, blacklisted := range strings.Split(*blacklist, ",") {
 				blacklisted = strings.TrimSpace(blacklisted)
 				if strings.HasPrefix(blacklisted, "^") && strings.HasPrefix(address, blacklisted[1:]) || strings.HasSuffix(blacklisted, "$") && strings.HasSuffix(address, blacklisted[:len(blacklisted)-1]) || strings.Contains(address, blacklisted) {
-					if *Verbose {
-						_, _ = fmt.Fprint(flag.CommandLine.Output(), "Skipping Blacklisted: ", address, "\n")
+					if *VeryVerbose {
+						log.Println("Skipping Blacklisted: ", address)
 					}
 					goto NextAddress
 				}
 			}
 		} else {
-			if *Verbose {
-				_, _ = fmt.Fprint(flag.CommandLine.Output(), "Skipping Disabled: ", address, "\n")
+			// Everything Disabled...?
+			if *VeryVerbose {
+				log.Println("Skipping Disabled: ", address)
 			}
 			goto NextAddress
 		}
 
 		// Fire Up the FTP Server
 		if useRandomPort {
-			// Generate a Random Port (between minPort and maxPort); Try to Start the Server on Random Port
+			// Try to Start the Server on a Random Port
 			go func(hostname string) {
 				for {
+					wg.Add(1)
 					tryStartServer(hostname, *minPort+rand.Intn(*maxPort-*minPort-1))
+					wg.Done()
 				}
 			}(address)
 		} else {
-			// Try to Start the Server on a Port
+			// Try to Start the Server on a Specific Port
 			go func(hostname string, port int) {
+				wg.Add(1)
 				tryStartServer(hostname, port)
+				wg.Done()
 			}(address, *port)
 		}
 	NextAddress:
 	}
 
 	// Wait for Server(s) to Exit
-	hour, _ := time.ParseDuration("1h")
-	for {
-		time.Sleep(hour)
-	}
+	wg.Wait()
 }

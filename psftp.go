@@ -12,25 +12,37 @@ import (
 type PSFTPDriver struct{}
 
 func (driver *PSFTPDriver) Authenticate(user string, pass string) bool {
+	// Who?
 	return user == User && pass == Pass
 }
 
 func (driver *PSFTPDriver) Bytes(path string) (bytes int64) {
-	bytes = int64(len(path))
-	return
+	// Block Until Zip File Ready
+	<-ZipFileReady
+
+	// How?
+	return ZipFileStat.Size()
 }
 
 func (driver *PSFTPDriver) ModifiedTime(path string) (time.Time, error) {
-	return time.Now(), nil
+	// Block Until Zip File Ready
+	<-ZipFileReady
+
+	// When?
+	return ZipFileStat.ModTime(), nil
 }
 
 func (driver *PSFTPDriver) ChangeDir(path string) bool {
+	// Where?
 	return path == "\\" || path == "/"
 }
 
 func (driver *PSFTPDriver) DirContents(path string) (files []os.FileInfo) {
-	files = append(files, graval.NewFileItem(Filename, 1, time.Now()))
-	return
+	// Block Until Zip File Ready
+	<-ZipFileReady
+
+	// What?
+	return append(files, graval.NewFileItem(Filename, ZipFileStat.Size(), ZipFileStat.ModTime()))
 }
 
 func (driver *PSFTPDriver) DeleteDir(path string) bool {
@@ -61,6 +73,10 @@ func (PSFTPCloser) Close() error {
 }
 
 func (driver *PSFTPDriver) GetFile(path string) (reader io.ReadCloser, err error) {
+	// Block Until Zip File is Ready
+	<-ZipFileReady
+
+	// Why Not Share the Zip!? :P
 	zipFile, err := os.Open(ZipFile)
 	if err != nil {
 		reader = nil

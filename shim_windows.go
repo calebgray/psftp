@@ -11,6 +11,6 @@ func Shim() {
 
 	// Add the Tray Icon
 	go func() {
-		println(systray.Run(onReady, onExit))
+		println(systray.Run(systrayBegin, systrayExit))
 	}()
 }
