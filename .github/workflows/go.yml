@@ -11,11 +11,13 @@ jobs:
     name: windows-386
     runs-on: ubuntu-latest
     steps:
-      - name: Get the Date
-        id: date
-        run: echo '::set-output name=date::$(date +%Y.%m.%d)'
+      - name: Set the Version
+        id: data
+        run: echo '::set-output name=version::$(date +%Y.%m.%d)'
+      - name: Display the Version
+        run: echo ${{steps.data.outputs.version}}
       - uses: actions/checkout@master
-      - name: compile and release
+      - name: Compile and Release
         uses: ngs/go-release.action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -24,17 +26,19 @@ jobs:
           CMD_PATH: .
           EXTRA_FILES: README.md
           PROJECT_NAME: psftp
-          RELEASE_NAME: ${{steps.date.outputs.date}}
+          RELEASE_NAME: ${{steps.date.outputs.version}}
 
   build-windows-amd64:
     name: windows-amd64
     runs-on: ubuntu-latest
     steps:
-      - name: Get the Date
-        id: date
-        run: echo '::set-output name=date::$(date +%Y.%m.%d)'
+      - name: Set the Version
+        id: data
+        run: echo '::set-output name=version::$(date +%Y.%m.%d)'
+      - name: Display the Version
+        run: echo ${{steps.data.outputs.version}}
       - uses: actions/checkout@master
-      - name: compile and release
+      - name: Compile and Release
         uses: ngs/go-release.action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -43,4 +47,4 @@ jobs:
           CMD_PATH: .
           EXTRA_FILES: README.md
           PROJECT_NAME: psftp
-          RELEASE_NAME: ${{steps.date.outputs.date}}
+          RELEASE_NAME: ${{steps.date.outputs.version}}
