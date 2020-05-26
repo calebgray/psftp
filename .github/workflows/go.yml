@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      PSFTP_VERSION: `date +%Y.%m.%d`${GITHUB_SHA:4}
+      PSFTP_VERSION: `echo $(date +%Y.%m.%d)${GITHUB_SHA:4}`
     steps:
       - name: Show the Version
         run: echo $PSFTP_VERSION
