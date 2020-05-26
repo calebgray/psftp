@@ -28,4 +28,4 @@ jobs:
           draft: true
           prerelease: true
       - name: Build and Release
-        uses: .
+        uses: .github/workflows/Dockerfile
