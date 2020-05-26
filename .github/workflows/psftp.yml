@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      PSFTP_VERSION: "$(date +%Y.%m.%d)${GITHUB_SHA:4}"
+      PSFTP_VERSION: ""
     steps:
       - name: Show the Version
         run: echo $PSFTP_VERSION
@@ -27,8 +27,8 @@ jobs:
           body: ""
           draft: false
           prerelease: false
-      - name: Compile and Release
-        uses: ngs/go-release.action@v1.0.1
+      - name: Build and Release
+        uses: ./Dockerfile
         with:
           upload_url: ${{steps.create_release.outputs.upload_url}}
           asset_path: ./psftp-x86-$PSFTP_VERSION.zip
