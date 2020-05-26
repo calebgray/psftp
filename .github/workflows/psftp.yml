@@ -28,6 +28,4 @@ jobs:
           draft: true
           prerelease: true
       - name: Build and Release
-        runs:
-          using: docker
-          image: Dockerfile
+        run: build.sh
