@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Install Prerequisites
+apk add --no-cache curl git build-base
+
 # Set the Output Binary Name
 [ -z "${PROJECT_VERSION}" ] && exit 1
 OUTPUT_NAME="${PROJECT_NAME}-${GOARCH}-${PROJECT_VERSION}"

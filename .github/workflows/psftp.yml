@@ -7,7 +7,7 @@ on:
 jobs:
   build-windows-x86:
     name: windows-x86
-    runs-on: ubuntu-latest
+    runs-on: golang:1.14-alpine
     env:
       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       GIT_LOG: "$(git log --pretty=oneline)"
