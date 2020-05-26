@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Set the Version
         id: data
-        run: echo '::set-output name=version::$(date +%Y.%m.%d)'
+        run: echo "::set-output name=version::`date +%Y.%m.%d`"
       - name: Display the Version
         run: echo ${{steps.data.outputs.version}}
       - uses: actions/checkout@master
@@ -34,7 +34,7 @@ jobs:
     steps:
       - name: Set the Version
         id: data
-        run: echo '::set-output name=version::$(date +%Y.%m.%d)'
+        run: echo "::set-output name=version::`date +%Y.%m.%d`"
       - name: Display the Version
         run: echo ${{steps.data.outputs.version}}
       - uses: actions/checkout@master
