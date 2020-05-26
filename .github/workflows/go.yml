@@ -23,7 +23,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         with:
-          tag_name: ${{steps.date.outputs.version}}
+          tag_name: ${{github.ref}}
           release_name: psftpme-x86-${{steps.date.outputs.version}}.exe
           body: ""
           draft: false
