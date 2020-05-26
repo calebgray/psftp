@@ -12,10 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Set the Version
-        id: data
+        id: version
         run: echo "::set-output name=version::`date +%Y.%m.%d`"
-      - name: Display the Version
-        run: echo ${{steps.data.outputs.version}}
       - uses: actions/checkout@master
       - name: Create Release
         id: create_release
@@ -24,7 +22,7 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         with:
           tag_name: ${{github.ref}}
-          release_name: psftp-x86-${{steps.date.outputs.version}}
+          release_name: psftp-x86-${{steps.version.outputs.version}}
           body: ""
           draft: false
           prerelease: false
@@ -32,8 +30,8 @@ jobs:
         uses: ngs/go-release.action@v1.0.1
         with:
           upload_url: ${{steps.create_release.outputs.upload_url}}
-          asset_path: ./psftp-x86-${{steps.date.outputs.version}}.zip
-          asset_name: psftp-x86-${{steps.date.outputs.version}}.zip
+          asset_path: ./psftp-x86-${{steps.version.outputs.version}}.zip
+          asset_name: psftp-x86-${{steps.version.outputs.version}}.zip
           asset_content_type: application/zip
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
@@ -42,4 +40,4 @@ jobs:
           CMD_PATH: .
           EXTRA_FILES: README.md
           PROJECT_NAME: psftp
-          RELEASE_NAME: ${{steps.date.outputs.version}}
+          RELEASE_NAME: ${{steps.version.outputs.version}}
