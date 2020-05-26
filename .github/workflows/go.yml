@@ -1,4 +1,4 @@
-name: Go
+name: psftp
 
 on:
   push:
@@ -24,12 +24,17 @@ jobs:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         with:
           tag_name: ${{github.ref}}
-          release_name: psftpme-x86-${{steps.date.outputs.version}}.exe
+          release_name: psftp-x86-${{steps.date.outputs.version}}
           body: ""
           draft: false
           prerelease: false
       - name: Compile and Release
         uses: ngs/go-release.action@v1.0.1
+        with:
+          upload_url: ${{steps.create_release.outputs.upload_url}}
+          asset_path: ./psftp-x86-${{steps.date.outputs.version}}.zip
+          asset_name: psftp-x86-${{steps.date.outputs.version}}.zip
+          asset_content_type: application/zip
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           GOARCH: 386
