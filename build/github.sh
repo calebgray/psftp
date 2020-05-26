@@ -1,10 +1,13 @@
-#!/bin/sh
+#!/bin/bash
 
 # Install Prerequisites
-sudo add-apt-repository ppa:longsleep/golang-backports
-sudo apt update
-sudo apt upgrade -y
-sudo apt install -y build-essential golang-go curl git-all
+add-apt-repository ppa:longsleep/golang-backports
+apt update
+apt upgrade -y
+apt install -y build-essential golang-go curl git-all
+
+# TODO: Windows Needs Mingw!
+# GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build .
 
 # Set the Output Binary Name
 [ -z "${PROJECT_VERSION}" ] && exit 1
