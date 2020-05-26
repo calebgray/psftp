@@ -1,5 +1,3 @@
-name: psftp
-
 on:
   push:
     branches: [ master ]
@@ -7,12 +5,15 @@ on:
     branches: [ master ]
 
 jobs:
-  build-windows-386:
-    name: windows-386
+  build-windows-x86:
+    name: windows-x86
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       PROJECT_VERSION: "$(date +%Y.%m.%d)${GITHUB_SHA:4}"
+      PROJECT_NAME: psftp
+      GOARCH: 386
+      GOOS: windows
     steps:
       - name: Checkout Master
         uses: actions/checkout@master
@@ -20,22 +21,10 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         with:
-          tag_name: $PROJECT_VERSION
-          release_name: psftp-x86-$PROJECT_VERSION
-          body: $(git log --pretty=oneline)
-          draft: false
-          prerelease: false
+          tag_name: "$PROJECT_VERSION"
+          release_name: "psftp-x86-$PROJECT_VERSION"
+          body: "$(git log --pretty=oneline)"
+          draft: true
+          prerelease: true
       - name: Build and Release
         uses: ./Dockerfile
-        with:
-          upload_url: ${{steps.create_release.outputs.upload_url}}
-          asset_path: ./psftp-386-$PROJECT_VERSION.zip
-          asset_name: psftp-386-$PROJECT_VERSION.zip
-          asset_content_type: application/zip
-        env:
-          GOARCH: 386
-          GOOS: windows
-          CMD_PATH: .
-          EXTRA_FILES: README.md
-          PROJECT_NAME: psftp
-          RELEASE_NAME: ${{steps.version.outputs.version}}
