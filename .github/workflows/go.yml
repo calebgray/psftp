@@ -17,32 +17,22 @@ jobs:
       - name: Display the Version
         run: echo ${{steps.data.outputs.version}}
       - uses: actions/checkout@master
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        with:
+          tag_name: ${{steps.date.outputs.version}}
+          release_name: psftpme-x86-${{steps.date.outputs.version}}.exe
+          body: ""
+          draft: false
+          prerelease: false
       - name: Compile and Release
         uses: ngs/go-release.action@v1.0.1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           GOARCH: 386
-          GOOS: windows
-          CMD_PATH: .
-          EXTRA_FILES: README.md
-          PROJECT_NAME: psftp
-          RELEASE_NAME: ${{steps.date.outputs.version}}
-
-  build-windows-amd64:
-    name: windows-amd64
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set the Version
-        id: data
-        run: echo "::set-output name=version::`date +%Y.%m.%d`"
-      - name: Display the Version
-        run: echo ${{steps.data.outputs.version}}
-      - uses: actions/checkout@master
-      - name: Compile and Release
-        uses: ngs/go-release.action@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GOARCH: amd64
           GOOS: windows
           CMD_PATH: .
           EXTRA_FILES: README.md
