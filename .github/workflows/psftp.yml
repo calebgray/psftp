@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      GIT_LOG: "$(git log --pretty=oneline)"
       PROJECT_VERSION: "$(date +%Y.%m.%d)${GITHUB_SHA:4}"
       PROJECT_NAME: psftp
       GOARCH: 386
@@ -21,9 +22,9 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         with:
-          tag_name: "$PROJECT_VERSION"
-          release_name: "psftp-x86-$PROJECT_VERSION"
-          body: "$(git log --pretty=oneline)"
+          tag_name: ${{env.PROJECT_VERSION}}
+          release_name: psftp-x86-${{env.PROJECT_VERSION}}
+          body: ${{env.GIT_LOG}}
           draft: true
           prerelease: true
       - name: Build and Release
