@@ -1,7 +1,10 @@
 #!/bin/sh
 
 # Install Prerequisites
-apk add --no-cache curl git build-base
+sudo add-apt-repository ppa:longsleep/golang-backports
+sudo apt update
+sudo apt upgrade -y
+sudo apt install -y build-essential golang-go curl git-all
 
 # Set the Output Binary Name
 [ -z "${PROJECT_VERSION}" ] && exit 1
