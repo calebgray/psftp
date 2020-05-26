@@ -1,7 +1,7 @@
 #!/bin/sh
 
-# Set the Version
-PROJECT_VERSION="$(date +%Y.%m.%d).${GITHUB_SHA:4}"
+# Set the Output Binary Name
+[ -z "${PROJECT_VERSION}" ] && exit 1
 OUTPUT_NAME="${PROJECT_NAME}-${GOARCH}-${PROJECT_VERSION}"
 
 # Setup Go Build Environment
