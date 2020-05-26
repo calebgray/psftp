@@ -21,9 +21,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GOARCH: 386
           GOOS: windows
-          CMD_PATH: " "
-          EXTRA_FILES: "README.md"
-          PROJECT_NAME: "psftp"
+          CMD_PATH: .
+          EXTRA_FILES: README.md
+          PROJECT_NAME: psftp
           RELEASE_NAME: ${{steps.date.outputs.date}}
 
   build-windows-amd64:
@@ -40,7 +40,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GOARCH: amd64
           GOOS: windows
-          CMD_PATH: " "
-          EXTRA_FILES: "README.md"
-          PROJECT_NAME: "psftp"
-          RELEASE_NAME: "${{steps.date.outputs.date}}"
+          CMD_PATH: .
+          EXTRA_FILES: README.md
+          PROJECT_NAME: psftp
+          RELEASE_NAME: ${{steps.date.outputs.date}}
