@@ -27,5 +27,5 @@ jobs:
           body: ${{env.GIT_LOG}}
           draft: true
           prerelease: true
-      - name: Build and Release
-        run: ./build.sh
+      - name: Build and Upload
+        run: build/github.sh
