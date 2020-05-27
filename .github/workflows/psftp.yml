@@ -5,13 +5,11 @@ on:
     branches: [ master ]
 
 jobs:
-  build-win32:
+  release:
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       GIT_LOG: "$(git log --pretty=oneline)"
-      GOOS: windows
-      GOARCH: 386
     steps:
       - name: Checkout the Sources
         uses: actions/checkout@master
@@ -27,10 +25,17 @@ jobs:
           body: ${{env.GIT_LOG}}
           draft: true
           prerelease: true
-      - name: Upload the Release
+      - name: Upload psftp32.exe
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{steps.release.outputs.upload_url}}
-          asset_path: /psftp.exe
-          asset_name: psftp.exe
+          asset_path: /psftp32.exe
+          asset_name: psftp32.exe
+          asset_content_type: application/x-msdownload
+      - name: Upload psftp64.exe
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{steps.release.outputs.upload_url}}
+          asset_path: /psftp64.exe
+          asset_name: psftp64.exe
           asset_content_type: application/x-msdownload
