@@ -1,5 +1,5 @@
 # Ubuntu
-FROM ubuntu:latest AS psftp
+FROM ubuntu
 
 # Install CGO Prerequisites
 ENV DEBIAN_FRONTEND noninteractive
@@ -8,10 +8,6 @@ RUN apt update && apt upgrade -y && apt install -y build-essential curl git-all 
 # Install Go
 RUN curl https://dl.google.com/go/go1.14.3.linux-amd64.tar.gz | tar xzf - -C /opt/
 ENV PATH /opt/go/bin:~/go/bin:$PATH
-
-# Fork Builder
-RUN docker login -u ${{github.repostitory}} -p ${{secrets.GITHUB_TOKEN}}
-FROM calebgray/psftp:latest
 
 # Run the Build!
 WORKDIR /
