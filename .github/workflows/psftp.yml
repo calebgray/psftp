@@ -6,12 +6,13 @@ on:
 
 jobs:
   build-win32:
-    name: win32
-    uses: ./.github/actions/psftp
     env:
       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       GIT_LOG: "$(git log --pretty=oneline)"
     steps:
+      - name: Build the Release
+        id: build
+        uses: ./.github/actions/psftp
       - name: Create the Release
         id: release
         uses: actions/create-release@v1
