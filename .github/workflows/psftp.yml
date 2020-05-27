@@ -11,6 +11,8 @@ jobs:
       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       GIT_LOG: "$(git log --pretty=oneline)"
     steps:
+      - name: Checkout the Sources
+        uses: actions/checkout@master
       - name: Build the Release
         id: build
         uses: ./.github/actions/psftp
