@@ -5,8 +5,8 @@ on:
     branches: [ master ]
 
 jobs:
-  build-windows-x86:
-    name: windows-x86
+  build-windows-386:
+    name: windows-386
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
@@ -32,5 +32,13 @@ jobs:
           prerelease: true
       - name: Build and Upload
         run: sudo -E build/github.sh
-        env:
-          UPLOAD_URL: ${{steps.create_release.outputs.upload_url}}
+      - name: Upload Zip
+          id: upload-release-asset
+          uses: actions/upload-release-asset@v1
+          env:
+            GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          with:
+            upload_url: ${{steps.create_release.outputs.upload_url}}
+            asset_path: ./${{env.OUTPUT_NAME}}.zip
+            asset_name: ${{env.OUTPUT_NAME}}.zip
+            asset_content_type: application/zip
