@@ -6,18 +6,18 @@ apt upgrade -y
 apt install -y build-essential curl git-all
 
 # Install Go
-cd /opt
+cd /
 wget https://dl.google.com/go/go1.14.3.linux-amd64.tar.gz
 tar xf go1.14.3.linux-amd64.tar.gz
-export PATH=$PATH:/opt/go/bin
+export PATH=$PATH:/go/bin
 
 # Windows Shim
 OUTPUT_SUFFIX=""
 if [ "$GOOS" == 'windows' ]; then
-  OUTPUT_SUFFIX='.exe'
-  apt install -y mingw-w64
-  [ "$GOARCH" == '386' ] && CCARCH=i686 || CCARCH=x86_64
-  export CC=${CCARCH}-w64-mingw32-gcc
+	OUTPUT_SUFFIX='.exe'
+	apt install -y mingw-w64
+	[ "$GOARCH" == '386' ] && CCARCH=i686 || CCARCH=x86_64
+	export CC=${CCARCH}-w64-mingw32-gcc
 fi
 
 # Set the Output Binary Name
@@ -40,5 +40,13 @@ go build -o "${OUTPUT_NAME}${OUTPUT_SUFFIX}" .
 zip -r9 "${OUTPUT_NAME}.zip" "${OUTPUT_NAME}${OUTPUT_SUFFIX}"
 
 # Upload the Release
-curl -X POST --data-binary @${OUTPUT_NAME}.zip -H 'Content-Type: application/zip' -H "Authorization: Bearer ${GITHUB_TOKEN}" "${UPLOAD_URL}?name=${OUTPUT_NAME}.zip"
-curl -X POST --data-binary @${OUTPUT_NAME}${OUTPUT_SUFFIX} -H 'Content-Type: application/zip' -H "Authorization: Bearer ${GITHUB_TOKEN}" "${UPLOAD_URL}?name=${OUTPUT_NAME}${OUTPUT_SUFFIX}"
+upload(){
+	curl \
+		-H "Authorization: token $GITHUB_TOKEN" \
+		-H "Content-Type: $(file -b --mime-type $1)" \
+		--data-binary @$1 \
+		"${UPLOAD_URL}/repos/${GITHUB_REPOSITORY}/releases/${PROJECT_VERSION}/assets?name=$(basename $1)"
+}
+
+upload "${OUTPUT_NAME}.zip"
+upload "${OUTPUT_NAME}${OUTPUT_SUFFIX}"
