@@ -10,7 +10,6 @@ apt install -y build-essential golang-go curl git-all
 # GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build .
 
 # Set the Output Binary Name
-[ -z "${PROJECT_VERSION}" ] && exit 1
 OUTPUT_NAME="${PROJECT_NAME}-${GOARCH}-${PROJECT_VERSION}"
 
 # Setup Go Build Environment
