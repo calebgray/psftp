@@ -1,5 +1,5 @@
 # Ubuntu
-FROM ubuntu:latest AS builder
+FROM ubuntu:latest AS golang
 
 # Install CGO Prerequisites
 ENV DEBIAN_FRONTEND noninteractive
@@ -12,6 +12,9 @@ RUN curl -o /opt/go1.14.3.linux-amd64.tar.gz https://dl.google.com/go/go1.14.3.l
 RUN tar xf /opt/go1.14.3.linux-amd64.tar.gz -C /opt/
 RUN rm /opt/go1.14.3.linux-amd64.tar.gz
 ENV PATH /opt/go/bin:$PATH
+
+# New Builder
+FROM golang AS builder
 
 # Setup Environment
 ENV CC i686-w64-mingw32-gcc
