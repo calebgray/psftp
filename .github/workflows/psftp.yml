@@ -30,14 +30,15 @@ jobs:
           body: ${{env.GIT_LOG}}
           draft: true
           prerelease: true
-      - name: Build and Upload
+      - name: Build
+        id: build
         run: sudo -E build/github.sh
       - name: Upload Zip
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{steps.create_release.outputs.upload_url}}
-          asset_path: ./${{env.OUTPUT_NAME}}.zip
-          asset_name: ${{env.OUTPUT_NAME}}.zip
+          asset_path: ./${{steps.build.outputs.output_name}}.zip
+          asset_name: ${{steps.build.outputs.output_name}}.zip
           asset_content_type: application/zip
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

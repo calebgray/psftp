@@ -38,3 +38,7 @@ go build -o "${OUTPUT_NAME}${OUTPUT_SUFFIX}" .
 
 # Create the Archive
 zip -r9 "${OUTPUT_NAME}.zip" "${OUTPUT_NAME}${OUTPUT_SUFFIX}"
+
+# Exports
+echo "::set-env name=output_suffix::${OUTPUT_SUFFIX}"
+echo "::set-env name=output_name::${OUTPUT_NAME}"
