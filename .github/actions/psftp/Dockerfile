@@ -1,5 +1,5 @@
 # Ubuntu
-FROM ubuntu:latest AS golang
+FROM mwaeckerlin/mingw AS golang
 
 # Install CGO Prerequisites
 ENV DEBIAN_FRONTEND noninteractive
