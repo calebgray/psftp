@@ -26,3 +26,5 @@ export GOARCH=amd64
 export CC=x86_64-w64-mingw32-gcc
 go build -ldflags "-linkmode=internal -H=windowsgui" .
 mv psftp.exe /psftp64.exe
+
+ls /
