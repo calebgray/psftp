@@ -6,6 +6,7 @@ on:
 
 jobs:
   build-win32:
+    runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       GIT_LOG: "$(git log --pretty=oneline)"
