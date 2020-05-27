@@ -29,4 +29,4 @@ jobs:
           draft: true
           prerelease: true
       - name: Build and Upload
-        run: sudo build/github.sh
+        run: sudo -E build/github.sh
