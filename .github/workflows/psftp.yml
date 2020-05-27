@@ -15,12 +15,12 @@ jobs:
       GOOS: windows
       CGO_ENABLED: 1
     steps:
+      - name: Checkout Master
+        uses: actions/checkout@master
       - name: Setup Environment
         run: |
           echo "::set-env name=GIT_LOG::$(git log --pretty=oneline)"
           echo "::set-env name=PROJECT_VERSION::$(date +%Y.%m.%d)${GITHUB_SHA:4}"
-      - name: Checkout Master
-        uses: actions/checkout@master
       - name: Create the Release
         id: create_release
         uses: actions/create-release@v1
