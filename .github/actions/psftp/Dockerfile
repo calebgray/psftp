@@ -16,5 +16,5 @@ ENV PATH /opt/go/bin:$PATH
 # Fork Builder
 FROM golang AS builder
 
-# Setup Environment
-CMD ./build.sh
+# Run the Build!
+CMD .github/actions/psftp/build.sh
