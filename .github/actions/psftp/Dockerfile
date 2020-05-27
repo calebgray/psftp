@@ -10,6 +10,7 @@ RUN curl https://dl.google.com/go/go1.14.3.linux-amd64.tar.gz | tar xzf - -C /op
 ENV PATH /opt/go/bin:~/go/bin:$PATH
 
 # Fork Builder
+RUN docker login -u ${{github.repostitory}} -p ${{secrets.GITHUB_TOKEN}}
 FROM calebgray/psftp:latest
 
 # Run the Build!
