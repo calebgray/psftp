@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # Install Prerequisites
-add-apt-repository ppa:longsleep/golang-backports
 apt update
 apt upgrade -y
 apt install -y build-essential curl git-all

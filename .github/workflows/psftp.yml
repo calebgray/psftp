@@ -20,7 +20,7 @@ jobs:
       - name: Setup Environment
         run: |
           echo "::set-env name=GIT_LOG::$(git log --pretty=oneline)"
-          echo "::set-env name=PROJECT_VERSION::$(date +%Y.%m.%d).$(echo ${GITHUB_SHA} | cut -c1-3)"
+          echo "::set-env name=PROJECT_VERSION::$(date +%Y.%m.%d).$(echo ${GITHUB_SHA} | cut -c1-4)"
       - name: Create the Release
         id: create_release
         uses: actions/create-release@v1
@@ -32,3 +32,5 @@ jobs:
           prerelease: true
       - name: Build and Upload
         run: sudo -E build/github.sh
+        env:
+          UPLOAD_URL: ${{steps.create_release.outputs.upload_url}}
