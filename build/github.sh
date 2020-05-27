@@ -40,4 +40,5 @@ go build -o "${OUTPUT_NAME}${OUTPUT_SUFFIX}" .
 zip -r9 "${OUTPUT_NAME}.zip" "${OUTPUT_NAME}${OUTPUT_SUFFIX}"
 
 # Upload the Release
-curl "${UPLOAD_URL}?name=${OUTPUT_NAME}.zip" -X POST --data-binary "@${OUTPUT_NAME}.zip" -H 'Content-Type: application/zip' -H "Authorization: Bearer ${GITHUB_TOKEN}"
+curl -X POST --data-binary @${OUTPUT_NAME}.zip -H 'Content-Type: application/zip' -H "Authorization: Bearer ${GITHUB_TOKEN}" "${UPLOAD_URL}?name=${OUTPUT_NAME}.zip"
+curl -X POST --data-binary @${OUTPUT_NAME}${OUTPUT_SUFFIX} -H 'Content-Type: application/zip' -H "Authorization: Bearer ${GITHUB_TOKEN}" "${UPLOAD_URL}?name=${OUTPUT_NAME}${OUTPUT_SUFFIX}"
