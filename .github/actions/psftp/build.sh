@@ -7,7 +7,7 @@ export GOARCH=amd64
 # Convert Icon
 for i in 1 2 3 4 5; do go get -u github.com/cratonica/2goarray && break || sleep 1; done
 /root/go/bin/2goarray Icon main < icon.ico > icon.go
-s
+
 # Embed Icon in Resource
 for i in 1 2 3 4 5; do go get -u github.com/akavel/rsrc && break || sleep 1; done
 /root/go/bin/rsrc -ico icon.ico
