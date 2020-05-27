@@ -4,7 +4,13 @@
 add-apt-repository ppa:longsleep/golang-backports
 apt update
 apt upgrade -y
-apt install -y build-essential golang-go curl git-all
+apt install -y build-essential curl git-all
+
+# Install Go
+cd /opt
+wget https://dl.google.com/go/go1.14.3.linux-amd64.tar.gz
+tar xf go1.14.3.linux-amd64.tar.gz
+export PATH=$PATH:/opt/go/bin
 
 # Windows Shim
 OUTPUT_SUFFIX=""
