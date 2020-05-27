@@ -13,6 +13,6 @@ ENV PATH /opt/go/bin:~/go/bin:$PATH
 FROM golang AS builder
 
 # Run the Build!
-WORKDIR /root/
+WORKDIR /
 COPY . .
 ENTRYPOINT .github/actions/psftp/build.sh
