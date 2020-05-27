@@ -12,16 +12,11 @@ tar xf go1.14.3.linux-amd64.tar.gz
 export PATH=$PATH:/opt/go/bin
 
 # Windows Shim
-export OUTPUT_SUFFIX=""
 if [ "$GOOS" == 'windows' ]; then
-	OUTPUT_SUFFIX='.exe'
 	apt install -y mingw-w64
 	[ "$GOARCH" == '386' ] && CCARCH=i686 || CCARCH=x86_64
 	export CC=${CCARCH}-w64-mingw32-gcc
 fi
-
-# Set the Output Binary Name
-export OUTPUT_NAME="${PROJECT_NAME}-${GOARCH}-${PROJECT_VERSION}"
 
 # Setup Go Build Environment
 PROJECT_ROOT="/go/src/github.com/${GITHUB_REPOSITORY}"
@@ -38,7 +33,3 @@ go build -o "${OUTPUT_NAME}${OUTPUT_SUFFIX}" .
 
 # Create the Archive
 zip -r9 "${OUTPUT_NAME}.zip" "${OUTPUT_NAME}${OUTPUT_SUFFIX}"
-
-# Exports
-echo "::set-env name=output_suffix::${OUTPUT_SUFFIX}"
-echo "::set-env name=output_name::${OUTPUT_NAME}"
