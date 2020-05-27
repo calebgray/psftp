@@ -11,11 +11,15 @@ wget https://dl.google.com/go/go1.14.3.linux-amd64.tar.gz
 tar xf go1.14.3.linux-amd64.tar.gz
 export PATH=$PATH:/opt/go/bin
 
-# Windows Shim
+# Prepare OS
 if [ "$GOOS" == 'windows' ]; then
+	# Windows
 	apt install -y mingw-w64
 	[ "$GOARCH" == '386' ] && CCARCH=i686 || CCARCH=x86_64
 	export CC=${CCARCH}-w64-mingw32-gcc
+else
+	# Linux
+	apt install -y pkg-config libxxf86vm-dev libappindicator3-dev
 fi
 
 # Setup Go Build Environment
