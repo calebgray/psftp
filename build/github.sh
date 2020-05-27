@@ -20,7 +20,7 @@ OUTPUT_NAME="${PROJECT_NAME}-${GOARCH}-${PROJECT_VERSION}"
 
 # Setup Go Build Environment
 PROJECT_ROOT="/go/src/github.com/${GITHUB_REPOSITORY}"
-PROJECT_PARENT_DIR=$(dirname "$PROJECT_ROOT")
+PROJECT_PARENT_DIR="/go/src/github.com/${GITHUB_ACTOR}"
 mkdir -p "$PROJECT_PARENT_DIR"
 ln -s "$GITHUB_WORKSPACE" "$PROJECT_ROOT"
 cd "$PROJECT_ROOT" || exit
