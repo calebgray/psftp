@@ -15,6 +15,7 @@ jobs:
       PROJECT_NAME: psftp
       GOARCH: 386
       GOOS: windows
+      CGO_ENABLED: 1
     steps:
       - name: Checkout Master
         uses: actions/checkout@master

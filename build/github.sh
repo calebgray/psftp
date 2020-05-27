@@ -6,8 +6,14 @@ apt update
 apt upgrade -y
 apt install -y build-essential golang-go curl git-all
 
-# TODO: Windows Needs Mingw!
-# GOOS=windows GOARCH=amd64 CGO_ENABLED=1 CC=x86_64-w64-mingw32-gcc go build .
+# Windows Shim
+OUTPUT_SUFFIX=""
+if [ "$GOOS" == 'windows' ]; then
+  OUTPUT_SUFFIX='.exe'
+  apt install -y mingw-w64
+  [ "$GOARCH" == '386' ] && CCARCH=i686 || CCARCH=x86_64
+  export CC=${CCARCH}-w64-mingw32-gcc
+fi
 
 # Set the Output Binary Name
 OUTPUT_NAME="${PROJECT_NAME}-${GOARCH}-${PROJECT_VERSION}"
@@ -23,8 +29,6 @@ cd "$PROJECT_ROOT" || exit
 go get -v ./...
 
 # Run the Build
-OUTPUT_SUFFIX=""
-[ "$GOOS" == 'windows' ] && OUTPUT_SUFFIX='.exe'
 go build . -o "${OUTPUT_NAME}${OUTPUT_SUFFIX}"
 
 # Create the Archive
