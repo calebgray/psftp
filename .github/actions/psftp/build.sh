@@ -15,4 +15,4 @@ go get -u github.com/ffred/guitocons
 #mkdir /github/home/go/src/github.com/ffred && cd /github/home/go/src/github.com/ffred && git clone https://github.com/ffred/guitocons
 
 # Go Build!
-GOOS=windows GOARCH=386 go build .
+go build .
