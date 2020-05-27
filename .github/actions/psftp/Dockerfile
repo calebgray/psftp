@@ -15,4 +15,4 @@ FROM golang AS builder
 # Run the Build!
 WORKDIR /root/
 COPY . .
-ENTRYPOINT /usr/bin/bash
+ENTRYPOINT .github/actions/psftp/build.sh
