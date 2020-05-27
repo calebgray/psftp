@@ -22,3 +22,8 @@ go get -d . || true
 # Go Build!
 export CC=i686-w64-mingw32-gcc
 go build -ldflags "-linkmode=internal -H=windowsgui" .
+
+# List Files
+pwd
+echo '----'
+ls

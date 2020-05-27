@@ -1,5 +1,5 @@
 # Ubuntu
-FROM ubuntu:latest AS golang
+FROM ubuntu:latest AS psftp
 
 # Install CGO Prerequisites
 ENV DEBIAN_FRONTEND noninteractive
@@ -10,7 +10,7 @@ RUN curl https://dl.google.com/go/go1.14.3.linux-amd64.tar.gz | tar xzf - -C /op
 ENV PATH /opt/go/bin:~/go/bin:$PATH
 
 # Fork Builder
-FROM golang AS builder
+FROM psftp:latest
 
 # Run the Build!
 WORKDIR /

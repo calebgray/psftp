@@ -31,6 +31,6 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{steps.release.outputs.upload_url}}
-          asset_path: /root/psftp.exe
+          asset_path: /psftp.exe
           asset_name: psftp.exe
           asset_content_type: application/x-msdownload
