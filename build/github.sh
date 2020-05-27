@@ -29,7 +29,7 @@ cd "$PROJECT_ROOT" || exit
 go get -v ./...
 
 # Run the Build
-go build . -o "${OUTPUT_NAME}${OUTPUT_SUFFIX}"
+go build -o "${OUTPUT_NAME}${OUTPUT_SUFFIX}" .
 
 # Create the Archive
 zip -r9 "${OUTPUT_NAME}.zip" "${OUTPUT_NAME}${OUTPUT_SUFFIX}"
