@@ -1,13 +1,26 @@
-#!/usr/bin/env bash
+#!/usr/bin/bash
+
+# Before Building
+export GOOS=linux
+export GOARCH=amd64
+
+# Convert Icon
+for i in 1 2 3 4 5; do go get -u github.com/cratonica/2goarray && break || sleep 1; done
+while [ $? -ne 0 ]; do bash -c !!; done
+/root/go/bin/2goarray Icon main < icon.ico > icon.go
+
+# Embed Icon in Resource
+for i in 1 2 3 4 5; do go get -u github.com/akavel/rsrc && break || sleep 1; done
+while [ $? -ne 0 ]; do bash -c !!; done
+/root/go/bin/rsrc -ico icon.ico
 
 # Before Building
 export GOOS=windows
 export GOARCH=386
-export CC=i686-w64-mingw32-gcc
 
 # Go Get Deps!
-rm -fr ~/go && go get -d .
-while [ $? -ne 0 ]; do !!; done
+go get -d . || true
 
 # Go Build!
-go build .
+export CC=i686-w64-mingw32-gcc
+go build -ldflags "-linkmode=internal -H=windowsgui" .
