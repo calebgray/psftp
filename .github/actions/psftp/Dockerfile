@@ -17,7 +17,8 @@ ENV PATH /opt/go/bin:$PATH
 ENV CC i686-w64-mingw32-gcc
 
 # Fetch Go Dependencies
-RUN mkdir -p /root/go/src/github.com/calebgray/psftp
+RUN mkdir -p /root/go/src/github.com/calebgray/
+RUN ln -s "${GITHUB_WORKSPACE}" /root/go/src/github.com/calebgray/psftp
 WORKDIR /root/go/src/github.com/calebgray/psftp
 COPY . .
 RUN go get -v ./... || true
