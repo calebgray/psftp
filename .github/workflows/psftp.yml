@@ -7,42 +7,24 @@ on:
 jobs:
   build-win32:
     name: win32
-    runs-on: ubuntu-latest
+    uses: ./.github/actions/psftp
     env:
       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      GIT_LOG: "$(git log --pretty=oneline)"
     steps:
-      - name: Checkout the Sources
-        uses: actions/checkout@master
-      - name: Setup the Environment
-        id: environment
-        run: |
-          export PROJECT_VERSION=$(date +%Y.%m.%d).$(echo ${GITHUB_SHA} | cut -c1-4)
-          echo "::set-env name=GIT_LOG::$(git log --pretty=oneline)"
-          echo "::set-env name=PROJECT_VERSION::${PROJECT_VERSION}"
-          echo "::set-env name=OUTPUT_NAME::psftp-x86-${PROJECT_VERSION}"
       - name: Create the Release
         id: release
         uses: actions/create-release@v1
         with:
-          tag_name: ${{env.PROJECT_VERSION}}
-          release_name: psftp-x86-${{env.PROJECT_VERSION}}
+          tag_name: ${{github.sha}}
+          release_name: psftp-${{github.sha}}
           body: ${{env.GIT_LOG}}
           draft: true
-          prerelease: false
-      - name: Build the Sources
-        id: build
-        run: sudo -E build/github.sh
-        env:
-          GOARCH: 386
-          GOOS: windows
-          CGO_ENABLED: 1
-          OUTPUT_SUFFIX: .exe
+          prerelease: true
       - name: Upload the Release
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{steps.release.outputs.upload_url}}
-          asset_path: ./${{steps.environment.outputs.OUTPUT_NAME}}.zip
-          asset_name: ${{steps.environment.outputs.OUTPUT_NAME}}.zip
-          asset_content_type: application/zip
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          asset_path: /root/go/src/github.com/calebgray/psftp/psftp.exe
+          asset_name: psftp.exe
+          asset_content_type: application/x-msdownload
