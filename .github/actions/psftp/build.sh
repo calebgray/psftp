@@ -12,7 +12,6 @@ export CC=i686-w64-mingw32-gcc
 go get -v ./... || true
 go get -u golang.org/x/sys/windows
 go get -u github.com/ffred/guitocons
-#mkdir /github/home/go/src/github.com/ffred && cd /github/home/go/src/github.com/ffred && git clone https://github.com/ffred/guitocons
 
 # Go Build!
 go build .
