@@ -7,7 +7,7 @@ RUN apt update && apt upgrade -y && apt install -y build-essential curl git-all 
 
 # Install Go
 RUN curl https://dl.google.com/go/go1.14.3.linux-amd64.tar.gz | tar xzf - -C /opt/
-ENV PATH /opt/go/bin:/root/go/bin:$PATH
+ENV PATH /opt/go/bin:~/go/bin:$PATH
 
 # Fork Builder
 FROM golang AS builder
