@@ -13,4 +13,5 @@ ENV PATH /opt/go/bin:$PATH
 FROM golang AS builder
 
 # Run the Build!
-CMD .github/actions/psftp/build.sh
+CMD bash -c '[ -x .github/actions/psftp/build.sh > /dev/null ] && .github/actions/psftp/build.sh'
+ENTRYPOINT /bin/sh
