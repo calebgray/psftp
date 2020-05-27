@@ -6,10 +6,10 @@ apt upgrade -y
 apt install -y build-essential curl git-all
 
 # Install Go
-cd /
+cd /opt || exit
 wget https://dl.google.com/go/go1.14.3.linux-amd64.tar.gz
 tar xf go1.14.3.linux-amd64.tar.gz
-export PATH=$PATH:/go/bin
+export PATH=$PATH:/opt/go/bin
 
 # Windows Shim
 export OUTPUT_SUFFIX=""
