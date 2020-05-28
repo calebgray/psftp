@@ -1,5 +1,5 @@
-//go:generate go generate ./generators/icon
-//go:generate go generate ./generators/windows-icon
+//go:generate go generate generators/icon
+//go:generate go generate generators/windows-icon
 
 package main
 
@@ -90,9 +90,9 @@ func tryStartServer(hostname string, port int) {
 	psFtpMePort, _ := strconv.Atoi((*PsFtpMeAddress)[psFtpMePortPosition+1:])
 	PublicFtpURI = generateURI((*PsFtpMeAddress)[:psFtpMePortPosition], psFtpMePort)
 	if *PsFtpMe {
-		startPsFtpMe()
+		StartPsFtpMe()
 	} else {
-		stopPsFtpMe()
+		StopPsFtpMe()
 	}
 	_ = clipboard.WriteAll(FtpURI)
 

@@ -59,7 +59,7 @@ func systrayBegin() {
 				if *PsFtpMe {
 					stopPsFtpMe()
 				} else {
-					startPsFtpMe()
+					StartPsFtpMe()
 				}
 				_ = clipboard.WriteAll(FtpURI)
 				refreshPsFtpMeTitle(menuPsFtpMe)

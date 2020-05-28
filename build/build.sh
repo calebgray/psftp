@@ -35,8 +35,8 @@ cp ./*.md build
 # Go Build!
 GOOS=windows GOARCH=386 CC=i686-w64-mingw32-gcc go build -ldflags '-linkmode=internal -H=windowsgui' . && mv "${PROJECT_NAME}.exe" "build/${PROJECT_NAME}32-${PROJECT_VERSION}.exe" || exit 50
 GOOS=windows GOARCH=amd64 CC=x86_64-w64-mingw32-gcc go build -ldflags '-linkmode=internal -H=windowsgui' . && mv "${PROJECT_NAME}.exe" "build/${PROJECT_NAME}64-${PROJECT_VERSION}.exe" || exit 51
-#GOOS=linux GOARCH=386 CC="gcc -m32 -melf_i386" go build -ldflags '-linkmode=internal' . && mv "${PROJECT_NAME}" "build/${PROJECT_NAME}32-${PROJECT_VERSION}-gtk" || exit 60
-GOOS=linux GOARCH=amd64 CC="gcc -m64" go build -ldflags '-linkmode=internal' . && mv "${PROJECT_NAME}" "build/${PROJECT_NAME}64-${PROJECT_VERSION}-gtk" || exit 61
+#GOOS=linux GOARCH=386 CC="gcc -m32 -melf_i386" go build -ldflags -linkmode=internal . && mv "${PROJECT_NAME}" "build/${PROJECT_NAME}32-${PROJECT_VERSION}-gtk" || exit 60
+GOOS=linux GOARCH=amd64 CC="gcc -m64" go build -ldflags -linkmode=internal . && mv "${PROJECT_NAME}" "build/${PROJECT_NAME}64-${PROJECT_VERSION}-gtk" || exit 61
 
 # Exports
 if [ "${GITHUB_ACTIONS}" == 'true' ]; then

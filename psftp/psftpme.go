@@ -30,7 +30,7 @@ func (status PsFtpMeConnStatus) String() string {
 	}[status]
 }
 
-func startPsFtpMe() {
+func StartPsFtpMe() {
 	// Update Config Value
 	*PsFtpMe = true
 
@@ -165,7 +165,7 @@ func startPsFtpMe() {
 	}()
 }
 
-func stopPsFtpMe() {
+func StopPsFtpMe() {
 	// Update Network Status
 	PsFtpMeStatus = Off
 
@@ -184,7 +184,7 @@ func stopPsFtpMe() {
 	}
 }
 
-func getPsFtpMeTitle() string {
+func GetPsFtpMeTitle() string {
 	// Return the Current Status, Too!
 	var status string
 	if *PsFtpMe {
