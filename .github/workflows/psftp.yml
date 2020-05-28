@@ -15,11 +15,17 @@ jobs:
       - name: Build
         uses: ./
       - name: Release
-        id: create_release
+        id: create
         uses: actions/create-release@v1
         with:
           tag_name: ${{env.PROJECT_VERSION}}
-          release_name: psftp-x86-${{env.PROJECT_VERSION}}
+          release_name: psftp-${{env.PROJECT_VERSION}}
           body: ${{env.GIT_LOG}}
           draft: true
           prerelease: true
+    - name: Upload
+      uses: csexton/release-asset-action@v2
+      with:
+        pattern: "${{env.BUILD_DIR}}/*"
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        release-url: ${{steps.release.outputs.upload_url}}
