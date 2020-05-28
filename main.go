@@ -9,6 +9,8 @@ import (
 	"flag"
 	"fmt"
 	"github.com/atotto/clipboard"
+	"github.com/calebgray/psftp/psftp"
+	_ "github.com/calebgray/psftp/psftp"
 	"github.com/mholt/archiver/v3"
 	"github.com/yob/graval"
 	"io/ioutil"
@@ -90,15 +92,15 @@ func tryStartServer(hostname string, port int) {
 	psFtpMePort, _ := strconv.Atoi((*PsFtpMeAddress)[psFtpMePortPosition+1:])
 	PublicFtpURI = generateURI((*PsFtpMeAddress)[:psFtpMePortPosition], psFtpMePort)
 	if *PsFtpMe {
-		StartPsFtpMe()
+		psftp.StartPsFtpMe()
 	} else {
-		StopPsFtpMe()
+		psftp.StopPsFtpMe()
 	}
 	_ = clipboard.WriteAll(FtpURI)
 
 	// (Attempt to) Start the Server
 	_ = graval.NewFTPServer(&graval.FTPServerOpts{
-		Factory:    &PSFTPDriverFactory{},
+		Factory:    &psftp.PSFTPDriverFactory{},
 		ServerName: "psftp",
 		Hostname:   hostname,
 		Port:       port,
@@ -125,7 +127,7 @@ func evaluateConfigString(config map[string]interface{}, name string, fallback s
 
 func main() {
 	// Run the OS Shim!
-	Shim()
+	psftp.Shim()
 
 	// Setup Logging
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
