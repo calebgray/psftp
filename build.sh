@@ -8,6 +8,9 @@ if [ "${GITHUB_ACTIONS}" != 'true' ]; then
 	export PROJECT_NAME=$(basename "${GITHUB_REPOSITORY}")
 	export GITHUB_WORKSPACE=/${PROJECT_NAME}
 
+	# Clone Sources
+	git clone --depth 1 "https://github.com/${GITHUB_REPOSITORY}" "${GITHUB_WORKSPACE}" || su -c "!!" || exit 10
+
 	# Interactive!
 	echo '`exit` any time to begin build; `exit 1` to hook end of build.'
 	/usr/bin/bash
@@ -16,9 +19,8 @@ else
 	export PROJECT_NAME=$(basename "${GITHUB_REPOSITORY}")
 fi
 
-# Clone Sources
-git clone --depth 1 "https://github.com/${GITHUB_REPOSITORY}" "${GITHUB_WORKSPACE}" || su -c "!!" || exit 10
-cd "${GITHUB_WORKSPACE}" || exit 13
+# Sandbox
+cd "${GITHUB_WORKSPACE}" || exit 15
 
 # Host Environment
 export GOOS=linux
