@@ -13,7 +13,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
       - name: Build
-        uses: ./build
+        uses: ./
       - name: Release
         id: release
         uses: actions/create-release@v1
