@@ -24,8 +24,7 @@ jobs:
           draft: true
           prerelease: true
       - name: Upload
-        uses: csexton/release-asset-action@v2
+      - uses: actions/upload-artifact@v2-preview
         with:
-          pattern: ${{env.BUILD_DIR}}/*
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          release-url: ${{steps.release.outputs.upload_url}}
+          name: psftp-${{env.PROJECT_VERSION}}
+          path: ${{env.BUILD_DIR}}/*
