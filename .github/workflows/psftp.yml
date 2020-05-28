@@ -24,7 +24,7 @@ jobs:
           draft: true
           prerelease: true
       - name: Upload
-      - uses: actions/upload-artifact@v2-preview
+        uses: actions/upload-artifact@v2-preview
         with:
           name: psftp-${{env.PROJECT_VERSION}}
           path: ${{env.BUILD_DIR}}/*
