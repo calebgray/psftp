@@ -13,7 +13,7 @@ jobs:
       - name: Prepare
         run: wget https://raw.githubusercontent.com/calebgray/psftp/master/.github/actions/psftp/Dockerfile
       - name: Build
-        uses: .
+        uses: ./
       - name: Environment
         run: env
       - name: Filesystem
