@@ -9,6 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      GIT_LOG: "$(git log --pretty=oneline)"
+      PROJECT_VERSION: "$(date +%Y.%m.%d).${GITHUB_SHA:4}"
     steps:
       - name: Checkout
         uses: actions/checkout@master
@@ -18,3 +20,12 @@ jobs:
         run: env
       - name: Filesystem
         run: find /
+      - name: Release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{env.PROJECT_VERSION}}
+          release_name: psftp-x86-${{env.PROJECT_VERSION}}
+          body: ${{env.GIT_LOG}}
+          draft: true
+          prerelease: true
