@@ -7,7 +7,7 @@ import (
 
 func Shim() {
 	// Attach the Console to a Windows GUI App
-	guitocons.Guitocons()
+	_ = guitocons.Guitocons()
 
 	// Add the Tray Icon
 	go func() {

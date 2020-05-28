@@ -12,5 +12,7 @@ jobs:
     steps:
       - name: Build
         uses: ./.github/actions/psftp
+      - name: Environment
+        run: env
       - name: Filesystem
         run: find /
