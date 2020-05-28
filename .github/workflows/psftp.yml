@@ -10,10 +10,10 @@ jobs:
     env:
       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
     steps:
-      - name: Prepare
-        run: wget https://raw.githubusercontent.com/calebgray/psftp/master/.github/actions/psftp/Dockerfile
+      - name: Checkout
+        uses: actions/checkout@master
       - name: Build
-        uses: ./
+        uses: ./.github/actions/psftp
       - name: Environment
         run: env
       - name: Filesystem
