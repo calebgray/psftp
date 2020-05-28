@@ -1,4 +1,4 @@
-package psftp
+package main
 
 import (
 	"bufio"

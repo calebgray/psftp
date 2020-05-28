@@ -1,6 +1,6 @@
 // +build !windows
 
-package psftp
+package main
 
 func Shim() {
 	//
