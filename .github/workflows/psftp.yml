@@ -5,13 +5,15 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      GIT_LOG: "$(git log --pretty=oneline)"
-      PROJECT_VERSION: "$(date +%Y.%m.%d).${GITHUB_SHA:4}"
     steps:
+      - name: Environment
+        run: |
+          echo "::set-env name=GIT_LOG::$(git log --pretty=oneline)"
+          echo "::set-env name=PROJECT_VERSION::$(date +%Y.%m.%d).$(echo ${GITHUB_SHA} | cut -c1-4)"
       - name: Checkout
         uses: actions/checkout@master
       - name: Build
-        uses: ./.github/actions/psftp
+        uses: .
       - name: Release
         id: create_release
         uses: actions/create-release@v1
