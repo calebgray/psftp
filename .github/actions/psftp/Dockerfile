@@ -10,5 +10,5 @@ RUN curl https://dl.google.com/go/go1.14.3.linux-amd64.tar.gz | tar xzf - -C /op
 ENV PATH /opt/go/bin:~/go/bin:$PATH
 
 # Run the Build!
-COPY ./build.sh .
+COPY . .
 CMD ./build.sh

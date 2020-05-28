@@ -6,10 +6,7 @@ if [ "${GITHUB_ACTIONS}" != 'true' ]; then
 	# Setup Environment
 	export GITHUB_REPOSITORY=calebgray/psftp
 	export PROJECT_NAME=$(basename "${GITHUB_REPOSITORY}")
-	export GITHUB_WORKSPACE=/${PROJECT_NAME}
-
-	# Clone Sources
-	git clone --depth 1 "https://github.com/${GITHUB_REPOSITORY}" "${GITHUB_WORKSPACE}" || su -c "!!" || exit 10
+	export GITHUB_WORKSPACE=/
 
 	# Interactive!
 	echo '`exit` any time to begin build; `exit 1` to hook end of build.'
