@@ -9,33 +9,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      GIT_LOG: "$(git log --pretty=oneline)"
     steps:
-      - name: Checkout the Sources
-        uses: actions/checkout@master
-      - name: Build the Release
-        id: build
+      - name: Build
         uses: ./.github/actions/psftp
-      - name: Create the Release
-        id: release
-        uses: actions/create-release@v1
-        with:
-          tag_name: ${{github.sha}}
-          release_name: psftp-${{github.sha}}
-          body: ${{env.GIT_LOG}}
-          draft: true
-          prerelease: true
-      - name: Upload psftp32.exe
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{steps.release.outputs.upload_url}}
-          asset_path: /psftp32.exe
-          asset_name: psftp32.exe
-          asset_content_type: application/x-msdownload
-      - name: Upload psftp64.exe
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{steps.release.outputs.upload_url}}
-          asset_path: /psftp64.exe
-          asset_name: psftp64.exe
-          asset_content_type: application/x-msdownload
