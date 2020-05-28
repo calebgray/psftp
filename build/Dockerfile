@@ -11,4 +11,4 @@ ENV PATH /opt/go/bin:~/go/bin:$PATH
 
 # Run the Build!
 COPY . .
-CMD ./build.sh
+CMD build/build.sh

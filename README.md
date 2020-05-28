@@ -21,7 +21,8 @@ Simply execute `psftp -psftpme` from the CLI, or enable it from the GUI.
 * [X] Retries and Timeouts
 * [X] psftp.me Integration
 * [X] Automatic Builds
-* [ ] Versioning
+* [X] Go Generate Build System
+* [X] Versioning
 * [ ] Auto-Update
 * [ ] Release Candidate(s)
 * [ ] Release First Stable Version
