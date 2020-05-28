@@ -29,8 +29,11 @@ go get -d . || go get -d . || exit 20
 # Go Generate!
 go generate . || exit 30
 
+# All Systems Go...!
+mkdir build
+
 # Go RTFM!
-cp ./*.md build
+cp ./*.md build/
 
 # Go Build!
 GOOS=windows GOARCH=386 CC=i686-w64-mingw32-gcc go build -ldflags '-linkmode=internal -H=windowsgui' . && mv "${PROJECT_NAME}.exe" "build/${PROJECT_NAME}32-${PROJECT_VERSION}.exe" || exit 50
