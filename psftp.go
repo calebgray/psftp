@@ -9,34 +9,27 @@ import (
 	"time"
 )
 
-type PSFTPDriver struct {
-	User         string
-	Pass         string
-	Filename     string
-	ZipFileReady chan bool
-	ZipFileStat  os.FileInfo
-	ZipFile      os.File
-}
+type PSFTPDriver struct{}
 
 func (driver *PSFTPDriver) Authenticate(user string, pass string) bool {
 	// Who?
-	return user == driver.User && pass == driver.Pass
+	return user == User && pass == Pass
 }
 
 func (driver *PSFTPDriver) Bytes(path string) (bytes int64) {
 	// Block Until Zip File Ready
-	<-driver.ZipFileReady
+	<-ZipFileReady
 
 	// How?
-	return driver.ZipFileStat.Size()
+	return ZipFileStat.Size()
 }
 
 func (driver *PSFTPDriver) ModifiedTime(path string) (time.Time, error) {
 	// Block Until Zip File Ready
-	<-driver.ZipFileReady
+	<-ZipFileReady
 
 	// When?
-	return driver.ZipFileStat.ModTime(), nil
+	return ZipFileStat.ModTime(), nil
 }
 
 func (driver *PSFTPDriver) ChangeDir(path string) bool {
@@ -46,10 +39,10 @@ func (driver *PSFTPDriver) ChangeDir(path string) bool {
 
 func (driver *PSFTPDriver) DirContents(path string) (files []os.FileInfo) {
 	// Block Until Zip File Ready
-	<-driver.ZipFileReady
+	<-ZipFileReady
 
 	// What?
-	return append(files, graval.NewFileItem(driver.Filename, driver.ZipFileStat.Size(), driver.ZipFileStat.ModTime()))
+	return append(files, graval.NewFileItem(Filename, ZipFileStat.Size(), ZipFileStat.ModTime()))
 }
 
 func (driver *PSFTPDriver) DeleteDir(path string) bool {
@@ -70,11 +63,10 @@ func (driver *PSFTPDriver) MakeDir(path string) bool {
 
 type PSFTPCloser struct {
 	io.Reader
-	AutoQuit *bool
 }
 
-func (closer PSFTPCloser) Close() error {
-	if *closer.AutoQuit {
+func (PSFTPCloser) Close() error {
+	if *AutoQuit {
 		_ = systray.Quit()
 	}
 	return nil
@@ -82,10 +74,10 @@ func (closer PSFTPCloser) Close() error {
 
 func (driver *PSFTPDriver) GetFile(path string) (reader io.ReadCloser, err error) {
 	// Block Until Zip File is Ready
-	<-driver.ZipFileReady
+	<-ZipFileReady
 
 	// Why Not Share the Zip!? :P
-	zipFile, err := os.Open(driver.ZipFile)
+	zipFile, err := os.Open(ZipFile)
 	if err != nil {
 		reader = nil
 	} else {

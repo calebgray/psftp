@@ -14,7 +14,7 @@ var lastPsFtpMeTitle string
 
 func refreshPsFtpMeTitle(menuItem *systray.MenuItem) {
 	// Only Update the Menu When There's New Text
-	currentPsFtpMeTitle := getPsFtpMeTitle()
+	currentPsFtpMeTitle := GetPsFtpMeTitle()
 	if currentPsFtpMeTitle != lastPsFtpMeTitle {
 		_ = menuItem.SetTitle(currentPsFtpMeTitle)
 		lastPsFtpMeTitle = currentPsFtpMeTitle
@@ -36,7 +36,7 @@ func systrayBegin() {
 	systray.AddSeparator()
 
 	// psftp.me, Auto-Quit
-	menuPsFtpMe := systray.AddMenuItem(getPsFtpMeTitle(), "Generates a disposable Internet accessible link!", 0)
+	menuPsFtpMe := systray.AddMenuItem(GetPsFtpMeTitle(), "Generates a disposable Internet accessible link!", 0)
 	menuAutoQuit := systray.AddMenuItem(AutoQuitTitle[*AutoQuit], "Automatically quits P.S. FTP after the next successful download.", 0)
 	systray.AddSeparator()
 
@@ -57,7 +57,7 @@ func systrayBegin() {
 			case <-menuPsFtpMe.OnClickCh():
 				// Toggle!
 				if *PsFtpMe {
-					stopPsFtpMe()
+					StopPsFtpMe()
 				} else {
 					StartPsFtpMe()
 				}
