@@ -16,10 +16,6 @@ jobs:
         uses: actions/checkout@master
       - name: Build
         uses: ./.github/actions/psftp
-      - name: Environment
-        run: env
-      - name: Filesystem
-        run: find /
       - name: Release
         id: create_release
         uses: actions/create-release@v1
