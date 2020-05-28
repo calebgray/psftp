@@ -44,11 +44,6 @@ GOOS=linux GOARCH=amd64 CC="gcc -m64" go build -ldflags '-linkmode=internal' . &
 
 # Exports
 if [ "${GITHUB_ACTIONS}" == 'true' ]; then
-	export BUILD_FILES=$(find build)
-	BUILD_FILES="${BUILD_FILES//'%'/'%25'}"
-	BUILD_FILES="${BUILD_FILES//$'\n'/'%0A'}"
-	BUILD_FILES="${BUILD_FILES//$'\r'/'%0D'}"
-	echo "::set-env name=BUILD_FILES::${BUILD_FILES}"
 	echo "::set-env name=BUILD_DIR::$(pwd)/build"
 fi
 

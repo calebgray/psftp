@@ -15,7 +15,7 @@ jobs:
       - name: Build
         uses: ./
       - name: Release
-        id: create
+        id: release
         uses: actions/create-release@v1
         with:
           tag_name: ${{env.PROJECT_VERSION}}
