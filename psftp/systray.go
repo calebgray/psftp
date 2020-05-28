@@ -1,6 +1,6 @@
 //+build windows linux darwin
 
-package main
+package psftp
 
 import (
 	"github.com/atotto/clipboard"
