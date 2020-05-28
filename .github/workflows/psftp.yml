@@ -23,9 +23,9 @@ jobs:
           body: ${{env.GIT_LOG}}
           draft: true
           prerelease: true
-    - name: Upload
-      uses: csexton/release-asset-action@v2
-      with:
-        pattern: "${{env.BUILD_DIR}}/*"
-        github-token: ${{secrets.GITHUB_TOKEN}}
-        release-url: ${{steps.release.outputs.upload_url}}
+      - name: Upload
+        uses: csexton/release-asset-action@v2
+        with:
+          pattern: "${{env.BUILD_DIR}}/*"
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          release-url: ${{steps.release.outputs.upload_url}}
