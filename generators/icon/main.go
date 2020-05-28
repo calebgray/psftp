@@ -1,4 +1,4 @@
-//go:generate go run main.go ../../assets/icon.ico ../../psftp/icon.go Icon
+//go:generate go run main.go ../../assets/icon.ico ../../icon.go Icon
 
 package main
 

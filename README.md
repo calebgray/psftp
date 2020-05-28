@@ -30,15 +30,15 @@ Simply execute `psftp -psftpme` from the CLI, or enable it from the GUI.
 
 ## Development
 ```
-# Clone and Change Directory
+# Clone!
 git clone https://github.com/calebgray/psftp.git
 
 # Option 1: Dockerfile
 cd psftp
-docker build -t psftp build && docker run --rm psftp
+docker build -t psftp . && docker run --rm psftp
 
 # Option 2: Ubuntu
-cd psftp/psftp
+cd psftp
 apt install -y build-essential curl git-all pkg-config libxxf86vm-dev libappindicator3-dev gcc-mingw-w64-x86-64 # Prerequisites
 go get -ldflags -linkmode=internal .
 go generate .

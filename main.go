@@ -1,5 +1,5 @@
-//go:generate go generate generators/icon
-//go:generate go generate generators/windows-icon
+//go:generate go generate ./generators/icon
+//go:generate go generate ./generators/windows-icon
 
 package main
 
