@@ -1,5 +1,25 @@
 #!/usr/bin/bash
 
+# Upload!?
+if [ "${GITHUB_ACTIONS}" == 'true' ]; then
+	mkdir -p /root/.ssh
+	echo "${UPLOAD_KEY}" > /root/.ssh/id_rsa
+	chmod 600 /root/.ssh/id_rsa
+
+	UPLOAD_HOST=$(echo "${UPLOAD_GIT}" | grep -o '@[^:]*')
+	UPLOAD_HOST=${UPLOAD_HOST:1}
+	ssh-keyscan -H -t rsa "${UPLOAD_HOST}" > /root/.ssh/known_hosts
+
+	ssh -vv git@github.com
+
+	git clone "${UPLOAD_GIT}" upload || exit 70
+	cd upload || exit 71
+	git rm -fr build
+	mv ../build .
+	git commit -am "${PROJECT_VERSION}"
+	git push
+fi
+
 # Host Environment
 export GOOS=linux
 export GOARCH=amd64
@@ -52,24 +72,4 @@ fi
 # Debugging?
 if [ $DEBUG_BUILD -eq 1 ]; then
 	/usr/bin/bash
-fi
-
-# Upload!?
-if [ "${GITHUB_ACTIONS}" == 'true' ]; then
-	mkdir ~/.ssh
-	echo "${UPLOAD_KEY}" > ~/.ssh/id_rsa
-	chmod 600 ~/.ssh/id_rsa
-
-	UPLOAD_HOST=$(echo "${UPLOAD_GIT}" | grep -o '@[^:]*')
-	UPLOAD_HOST=${UPLOAD_HOST:1}
-	ssh-keyscan -H -t rsa "${UPLOAD_HOST}" > ~/.ssh/known_hosts
-
-	ssh -vv git@github.com
-
-	git clone "${UPLOAD_GIT}" upload || exit 70
-	cd upload || exit 71
-	git rm -fr build
-	mv ../build .
-	git commit -am "${PROJECT_VERSION}"
-	git push
 fi
