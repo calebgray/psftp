@@ -34,9 +34,9 @@ docker build -t psftp . && docker run --rm -it psftp
 
 # Option 2: Ubuntu
 cd psftp
-apt install -y build-essential curl git-all pkg-config libxxf86vm-dev libappindicator3-dev gcc-mingw-w64-x86-64 # Prerequisites
-go get -ldflags -linkmode=internal .
+sudo apt install -y build-essential curl git-all pkg-config libxxf86vm-dev libappindicator3-dev gcc-mingw-w64-x86-64 # Prerequisites
 go generate .
+go get -ldflags -linkmode=internal .
 go build -ldflags -linkmode=internal .
 ./psftp
 
@@ -47,8 +47,6 @@ go generate . && go build -ldflags -linkmode=internal .
 ## Donations
 [![By PayPal](https://github.com/calebgray/psftp/raw/master/assets/paypal.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AXXTUBFDC4DY2&source=url)
 
----
----
 
 # Works in Progress
 

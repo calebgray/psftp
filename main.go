@@ -1,5 +1,5 @@
-//go:generate go generate ./generators/usage
-//go:generate go generate ./generators/template
+///go:generate go generate ./generators/usage
+///go:generate go generate ./generators/template
 //go:generate go generate ./generators/icon
 //go:generate go generate ./generators/windows-icon
 
