@@ -64,9 +64,9 @@ if [ "${GITHUB_ACTIONS}" == 'true' ]; then
 	UPLOAD_HOST=${UPLOAD_HOST:1}
 	ssh-keyscan -H -t rsa "${UPLOAD_HOST}" > ~/.ssh/known_hosts
 
-	ssh "$(echo "${UPLOAD_GIT}" | grep -o '[^:]*')"
+	ssh -vv git@github.com
 
-	git -vv clone "${UPLOAD_GIT}" upload || exit 70
+	git clone "${UPLOAD_GIT}" upload || exit 70
 	cd upload || exit 71
 	git rm -fr build
 	mv ../build .
