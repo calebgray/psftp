@@ -1,3 +1,5 @@
+//go:generate go generate ./generators/usage
+//go:generate go generate ./generators/template
 //go:generate go generate ./generators/icon
 //go:generate go generate ./generators/windows-icon
 
@@ -129,12 +131,12 @@ func main() {
 	// Run the OS Shim!
 	Shim()
 
-	// Setup Logging
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	// Clean Logs By Default
+	log.SetFlags(0)
 
 	// Parse Command Line Flags
 	flag.Usage = func() {
-		log.Println("Usage: ", path.Base(os.Args[0]), " [-flags] <filenames...>")
+		log.Println("Usage:", path.Base(os.Args[0]), "[-flags...] <filenames...>")
 		flag.PrintDefaults()
 	}
 	Verbose = flag.Bool("v", false, "whisper sweet nothings aloud")
@@ -158,6 +160,9 @@ func main() {
 	// Pre-Process Flags/Commands
 	if *VeryVerbose {
 		*Verbose = true
+
+		// Debugging Logs
+		log.SetFlags(log.LstdFlags | log.Lshortfile)
 	}
 
 	// Config File?

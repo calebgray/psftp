@@ -36,7 +36,10 @@ func systrayBegin() {
 	systray.AddSeparator()
 
 	// psftp.me, Auto-Quit
-	menuPsFtpMe := systray.AddMenuItem(GetPsFtpMeTitle(), "Generates a disposable Internet accessible link!", 0)
+	var menuPsFtpMe *systray.MenuItem
+	if *ShowPsFtpMe {
+		menuPsFtpMe = systray.AddMenuItem(GetPsFtpMeTitle(), "Generates a disposable Internet accessible link!", 0)
+	}
 	menuAutoQuit := systray.AddMenuItem(AutoQuitTitle[*AutoQuit], "Automatically quits P.S. FTP after the next successful download.", 0)
 	systray.AddSeparator()
 
@@ -49,21 +52,30 @@ func systrayBegin() {
 
 	// Events-in-a-Thread
 	go func() {
+		// Dynamic Menus
+		if *ShowPsFtpMe {
+			for {
+				select {
+				case <-time.After(333 * time.Millisecond):
+					// Refresh...
+					refreshPsFtpMeTitle(menuPsFtpMe)
+				case <-menuPsFtpMe.OnClickCh():
+					// Toggle!
+					if *PsFtpMe {
+						StopPsFtpMe()
+					} else {
+						StartPsFtpMe()
+					}
+					_ = clipboard.WriteAll(FtpURI)
+					refreshPsFtpMeTitle(menuPsFtpMe)
+					saveConfig()
+				}
+			}
+		}
+
+		// Static Menus
 		for {
 			select {
-			case <-time.After(333 * time.Millisecond):
-				// Refresh...
-				refreshPsFtpMeTitle(menuPsFtpMe)
-			case <-menuPsFtpMe.OnClickCh():
-				// Toggle!
-				if *PsFtpMe {
-					StopPsFtpMe()
-				} else {
-					StartPsFtpMe()
-				}
-				_ = clipboard.WriteAll(FtpURI)
-				refreshPsFtpMeTitle(menuPsFtpMe)
-				saveConfig()
 			case <-menuAutoQuit.OnClickCh():
 				// Auto-Quit!?
 				*AutoQuit = !*AutoQuit
