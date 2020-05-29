@@ -47,6 +47,9 @@ go generate . && go build -ldflags -linkmode=internal .
 ## Donations
 [![By PayPal](https://github.com/calebgray/psftp/raw/master/assets/paypal.png)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AXXTUBFDC4DY2&source=url)
 
+---
+---
+
 # Works in Progress
 
 ## psftp.me
