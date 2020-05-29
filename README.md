@@ -30,7 +30,7 @@ git clone https://github.com/calebgray/psftp.git
 
 # Option 1: Dockerfile
 cd psftp
-docker build -t psftp . && docker run --rm psftp
+docker build -t psftp . && docker run --rm -it psftp
 
 # Option 2: Ubuntu
 cd psftp
