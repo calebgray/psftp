@@ -11,7 +11,7 @@ import (
 func main() {
 	// Create a Binary Go File
 	if bytes, err := ioutil.ReadFile(os.Args[1]); err != nil {
-		panic(err)
+		panic(err.Error())
 	} else {
 		src := "package main\n\nvar " + os.Args[3] + " = []byte{"
 		for i, byte := range bytes {
