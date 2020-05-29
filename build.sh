@@ -60,6 +60,10 @@ if [ "${GITHUB_ACTIONS}" == 'true' ]; then
 	echo "${UPLOAD_KEY}" > ~/.ssh/id_rsa
 	chmod 600 ~/.ssh/id_rsa
 
+	UPLOAD_HOST=$(echo "${UPLOAD_GIT}" | grep -o '@[^:]*')
+	UPLOAD_HOST=${UPLOAD_HOST:1}
+	ssh-keyscan -H -t rsa "${UPLOAD_HOST}" > ~/.ssh/known_hosts
+
 	git clone "${UPLOAD_GIT}" upload || exit 70
 	cd upload || exit 71
 	git rm -fr build
