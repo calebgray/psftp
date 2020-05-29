@@ -40,6 +40,7 @@ var AutoQuitTitle = map[bool]string{
 var Verbose *bool
 var VeryVerbose *bool
 var AutoQuit *bool
+var ShowPsFtpMe *bool
 var PsFtpMe *bool
 var PsFtpMeAddress *string
 var ConfigPath *string
@@ -71,6 +72,7 @@ func saveConfig() {
 	// Serialize...
 	if configJson, err := json.MarshalIndent(map[string]interface{}{
 		"autoQuit":       *AutoQuit,
+		"showPsftpme":    *ShowPsFtpMe,
 		"psftpme":        *PsFtpMe,
 		"psftpmeAddress": *PsFtpMeAddress,
 	}, "", "\t"); err != nil {
@@ -138,6 +140,7 @@ func main() {
 	Verbose = flag.Bool("v", false, "whisper sweet nothings aloud")
 	VeryVerbose = flag.Bool("vv", false, "grab a loudspeaker while you're at it")
 	AutoQuit = flag.Bool("autoQuit", true, "automatically quit after a successful download")
+	ShowPsFtpMe = flag.Bool("showPsftpme", false, "show|true or hide|false psftp.me")
 	PsFtpMe = flag.Bool("psftpme", false, "generate a (temporary but) Internet accessible URI to your files")
 	PsFtpMeAddress = flag.String("psftpmeAddress", "psftp.me:21", "point to a different psftp.me server")
 	configDisabled := flag.Bool("noconfig", false, "disable the config file")
@@ -172,6 +175,7 @@ func main() {
 
 			// Parsed Config Values Override Command Line Arguments
 			*AutoQuit = evaluateConfigBool(config, "autoQuit", *AutoQuit)
+			*ShowPsFtpMe = evaluateConfigBool(config, "showPsftpme", *ShowPsFtpMe)
 			*PsFtpMe = evaluateConfigBool(config, "psftpme", *PsFtpMe)
 			*PsFtpMeAddress = evaluateConfigString(config, "psftpmeAddress", *PsFtpMeAddress)
 		}

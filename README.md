@@ -2,11 +2,6 @@
 ## Portable. Simple. FTP.
 Drag and drop files/folders to `psftp` then paste the `ftp://` link in your clipboard wherever pleases you.
 
-## psftp.me
-Optionally, generate your very own Internet accessible link (limited resources; please support my development by donating). <3
-
-Simply execute `psftp -psftpme` from the CLI, or enable it from the GUI.
-
 ## GUI Legend
 | Off   | Halfway | On    | Retrying |
 | :---: | :---:   | :---: | :---:    |
@@ -19,11 +14,11 @@ Simply execute `psftp -psftpme` from the CLI, or enable it from the GUI.
 * [X] Command Line Interface
 * [X] Config File
 * [X] Retries and Timeouts
-* [X] psftp.me Integration
 * [X] Automatic Builds
 * [X] Go Generate Build System
 * [X] Versioning
 * [ ] Auto-Update
+* [ ] psftp.me Integration
 * [ ] Release Candidate(s)
 * [ ] Release First Stable Version
 * [ ] TLS/SSL Support
@@ -51,3 +46,10 @@ go generate . && go build -ldflags -linkmode=internal .
 
 ## Donations
 [By PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=AXXTUBFDC4DY2&source=url)
+
+# Works in Progress
+
+## psftp.me
+Optionally, generate your very own Internet accessible link (limited resources; please support my development by donating). <3
+
+Simply execute `psftp -psftpme` from the CLI, or enable it from the GUI.
