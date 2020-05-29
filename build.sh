@@ -24,7 +24,7 @@ if [ "${GITHUB_ACTIONS}" != 'true' ]; then
 	export PROJECT_NAME=psftp
 	export GITHUB_WORKSPACE=/
 
-	# Interactive!
+	# Interactive!?
 	echo '`exit` any time to begin build; `exit 1` to hook end of build.'
 	/usr/bin/bash
 	DEBUG_BUILD=$?
@@ -55,16 +55,6 @@ GOOS=windows GOARCH=amd64 CC=x86_64-w64-mingw32-gcc go build -ldflags '-linkmode
 #GOOS=linux GOARCH=386 CC="gcc -m32 -melf_i386" go build -ldflags -linkmode=internal . && mv "${PROJECT_NAME}" "build/${PROJECT_NAME}32-${PROJECT_VERSION}-gtk" || exit 60
 GOOS=linux GOARCH=amd64 CC="gcc -m64" go build -ldflags -linkmode=internal . && mv "${PROJECT_NAME}" "build/${PROJECT_NAME}64-${PROJECT_VERSION}-gtk" || exit 61
 
-# Exports
-if [ "${GITHUB_ACTIONS}" == 'true' ]; then
-	echo "::set-env name=BUILD_DIR::$(pwd)/build"
-fi
-
-# Debugging?
-if [ $DEBUG_BUILD -eq 1 ]; then
-	/usr/bin/bash
-fi
-
 # Upload!?
 if [ "${GITHUB_ACTIONS}" == 'true' ]; then
 	mkdir -p /root/.ssh
@@ -82,6 +72,12 @@ if [ "${GITHUB_ACTIONS}" == 'true' ]; then
 	cd upload || exit 71
 	git rm -fr build
 	mv ../build .
-	git commit -am "${PROJECT_VERSION}" build
+	git add build
+	git commit -m "${PROJECT_VERSION}"
 	git push
+fi
+
+# Debugging?
+if [ $DEBUG_BUILD -eq 1 ]; then
+	/usr/bin/bash
 fi
