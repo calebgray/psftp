@@ -7,6 +7,8 @@ jobs:
       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       UPLOAD_GIT: ${{secrets.UPLOAD_GIT}}
       UPLOAD_KEY: ${{secrets.UPLOAD_KEY}}
+      UPLOADER_EMAIL: ${{secrets.UPLOADER_EMAIL}}
+      UPLOADER_NAME: ${{secrets.UPLOADER_NAME}}
     steps:
       - name: Checkout
         uses: actions/checkout@master

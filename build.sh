@@ -1,23 +1,14 @@
 #!/usr/bin/bash
 
-# Upload!?
+# Prepare Linux
 if [ "${GITHUB_ACTIONS}" == 'true' ]; then
-	mkdir -p /root/.ssh
-	echo "${UPLOAD_KEY}" > /root/.ssh/id_rsa
-	chmod 600 /root/.ssh/id_rsa
+	# Install CGO Prerequisites
+	export DEBIAN_FRONTEND=noninteractive
+	apt update && apt upgrade -y && apt install -y build-essential curl git-all pkg-config libxxf86vm-dev libappindicator3-dev gcc-mingw-w64-x86-64
 
-	UPLOAD_HOST=$(echo "${UPLOAD_GIT}" | grep -o '@[^:]*')
-	UPLOAD_HOST=${UPLOAD_HOST:1}
-	ssh-keyscan -H -t rsa "${UPLOAD_HOST}" > /root/.ssh/known_hosts
-
-	ssh -vv git@github.com
-
-	git clone "${UPLOAD_GIT}" upload || exit 70
-	cd upload || exit 71
-	git rm -fr build
-	mv ../build .
-	git commit -am "${PROJECT_VERSION}"
-	git push
+	# Install Go
+	curl https://dl.google.com/go/go1.14.3.linux-amd64.tar.gz | tar xzf - -C /opt/
+	export PATH=/opt/go/bin:~/go/bin:$PATH
 fi
 
 # Host Environment
@@ -72,4 +63,25 @@ fi
 # Debugging?
 if [ $DEBUG_BUILD -eq 1 ]; then
 	/usr/bin/bash
+fi
+
+# Upload!?
+if [ "${GITHUB_ACTIONS}" == 'true' ]; then
+	mkdir -p /root/.ssh
+	echo "${UPLOAD_KEY}" > /root/.ssh/id_rsa
+	chmod 600 /root/.ssh/id_rsa
+
+	UPLOAD_HOST=$(echo "${UPLOAD_GIT}" | grep -o '@[^:]*')
+	UPLOAD_HOST=${UPLOAD_HOST:1}
+	ssh-keyscan -H -t rsa "${UPLOAD_HOST}" > /root/.ssh/known_hosts
+
+	git config --global user.email "${UPLOADER_EMAIL}"
+  git config --global user.name "${UPLOADER_NAME}"
+
+	git clone "${UPLOAD_GIT}" upload || exit 70
+	cd upload || exit 71
+	git rm -fr build
+	mv ../build .
+	git commit -am "${PROJECT_VERSION}" build
+	git push
 fi
