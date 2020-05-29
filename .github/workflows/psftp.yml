@@ -23,6 +23,9 @@ jobs:
           body: ${{env.GIT_LOG}}
           draft: true
           prerelease: true
+      - name: Debug
+        run: |
+          find ${{env.BUILD_DIR}}/*
       - name: Upload
         uses: actions/upload-artifact@v2-preview
         with:
