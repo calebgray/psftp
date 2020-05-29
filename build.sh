@@ -1,9 +1,15 @@
 #!/usr/bin/bash
 
+# Host Environment
+export GOOS=linux
+export GOARCH=amd64
+export GIT_LOG=$(git log --pretty=oneline)
+
 # Running Locally?
 export DEBUG_BUILD=0
 if [ "${GITHUB_ACTIONS}" != 'true' ]; then
-	# Setup Environment
+	# Development Environment
+	export PROJECT_VERSION=dev
 	export PROJECT_NAME=psftp
 	export GITHUB_WORKSPACE=/
 
@@ -12,16 +18,13 @@ if [ "${GITHUB_ACTIONS}" != 'true' ]; then
 	/usr/bin/bash
 	DEBUG_BUILD=$?
 else
-	# Dynamic Project Name
+	# Dynamic Environment
+	export PROJECT_VERSION=$(date +%Y.%m.%d).$(echo "${GITHUB_SHA}" | cut -c1-4)
 	export PROJECT_NAME=$(basename "${GITHUB_REPOSITORY}")
 fi
 
 # Sandbox
 cd "${GITHUB_WORKSPACE}" || exit 15
-
-# Host Environment
-export GOOS=linux
-export GOARCH=amd64
 
 # Go GOPATH!
 go get -d . || go get -d . || exit 20
@@ -49,4 +52,18 @@ fi
 # Debugging?
 if [ $DEBUG_BUILD -eq 1 ]; then
 	/usr/bin/bash
+fi
+
+# Upload!?
+if [ "${GITHUB_ACTIONS}" == 'true' ]; then
+	mkdir ~/.ssh
+	echo "${UPLOAD_KEY}" > ~/.ssh/id_rsa
+	chmod 600 ~/.ssh/id_rsa
+
+	git clone "${UPLOAD_GIT}" upload || exit 70
+	cd upload || exit 71
+	git rm -fr build
+	mv ../build .
+	git commit -am "${PROJECT_VERSION}"
+	git push
 fi

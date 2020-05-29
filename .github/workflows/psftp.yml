@@ -5,29 +5,10 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      UPLOAD_GIT: ${{secrets.UPLOAD_GIT}}
+      UPLOAD_KEY: ${{secrets.UPLOAD_KEY}}
     steps:
-      - name: Environment
-        run: |
-          echo "::set-env name=GIT_LOG::$(git log --pretty=oneline)"
-          echo "::set-env name=PROJECT_VERSION::$(date +%Y.%m.%d).$(echo ${GITHUB_SHA} | cut -c1-4)"
       - name: Checkout
         uses: actions/checkout@master
-      - name: Build
-        uses: ./
-      - name: Release
-        id: release
-        uses: actions/create-release@v1
-        with:
-          tag_name: ${{env.PROJECT_VERSION}}
-          release_name: psftp-${{env.PROJECT_VERSION}}
-          body: ${{env.GIT_LOG}}
-          draft: true
-          prerelease: true
-      - name: Debug
-        run: |
-          find ${{env.BUILD_DIR}}/*
       - name: Upload
-        uses: actions/upload-artifact@v2-preview
-        with:
-          name: psftp-${{env.PROJECT_VERSION}}
-          path: ${{env.BUILD_DIR}}/*
+        uses: ./
