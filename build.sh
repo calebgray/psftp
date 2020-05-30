@@ -1,16 +1,5 @@
 #!/usr/bin/bash
 
-# Prepare Linux
-if [ "${GITHUB_ACTIONS}" == 'true' ]; then
-	# Install CGO Prerequisites
-	export DEBIAN_FRONTEND=noninteractive
-	apt update && apt upgrade -y && apt install -y build-essential curl git-all pkg-config libxxf86vm-dev libappindicator3-dev gcc-mingw-w64-x86-64
-
-	# Install Go
-	curl https://dl.google.com/go/go1.14.3.linux-amd64.tar.gz | tar xzf - -C /opt/
-	export PATH=/opt/go/bin:~/go/bin:$PATH
-fi
-
 # Host Environment
 export GOOS=linux
 export GOARCH=amd64
@@ -22,7 +11,8 @@ if [ "${GITHUB_ACTIONS}" != 'true' ]; then
 	# Development Environment
 	export PROJECT_VERSION=dev
 	export PROJECT_NAME=psftp
-	export GITHUB_WORKSPACE=/
+	export GITHUB_WORKSPACE=/root
+	export PROJECT_ROOT="${HOME}/go/src/build.local/build/${PROJECT_NAME}"
 
 	# Interactive!?
 	echo '`exit` any time to begin build; `exit 1` to hook end of build.'
@@ -35,9 +25,12 @@ else
 fi
 
 # Sandbox
-cd "${GITHUB_WORKSPACE}" || exit 15
+mkdir -p "$(dirname "${PROJECT_ROOT}")"
+ln -s ${GITHUB_WORKSPACE} "${PROJECT_ROOT}"
+cd "${PROJECT_ROOT}" || exit 10
 
 # Go GOPATH!
+/usr/bin/bash
 go get -d . || go get -d . || exit 20
 
 # Go Generate!
@@ -69,7 +62,7 @@ if [ "${GITHUB_ACTIONS}" == 'true' ]; then
 
 	# Identify! Identify!
 	git config --global user.email "${UPLOADER_EMAIL}"
-  git config --global user.name "${UPLOADER_NAME}"
+	git config --global user.name "${UPLOADER_NAME}"
 
 	# Finally, Upload the Release!
 	git clone "${UPLOAD_GIT}" upload || exit 70
@@ -78,6 +71,7 @@ if [ "${GITHUB_ACTIONS}" == 'true' ]; then
 	mv ../build .
 	git add build
 	git commit -m "${PROJECT_VERSION}"
+	git tag -a "${PROJECT_VERSION}" -m "${GIT_LOG}"
 	git push
 fi
 

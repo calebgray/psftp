@@ -5,6 +5,7 @@ package main
 import (
 	"github.com/Masterminds/sprig"
 	"io/ioutil"
+	"log"
 	"os"
 	"strings"
 	"text/template"
@@ -22,7 +23,7 @@ func getTemplateData() map[string]string {
 		if value[0] == '@' {
 			// Read File
 			if val, err := ioutil.ReadFile(value[1:]); err != nil {
-				panic(err.Error())
+				log.Panic(err.Error())
 			} else {
 				value = string(val)
 			}
@@ -35,13 +36,15 @@ func getTemplateData() map[string]string {
 }
 
 func main() {
+	log.SetFlags(log.LstdFlags)
+
 	if tmplRaw, err := ioutil.ReadFile(os.Args[1]); err != nil {
-		panic(err.Error())
+		log.Panic(err.Error())
 	} else if tmpl, err := template.New("usage").Funcs(sprig.GenericFuncMap()).Parse(string(tmplRaw)); err != nil {
-		panic(err.Error())
+		log.Panic(err.Error())
 	} else if tmplOut, err := os.Create(os.Args[2]); err != nil {
-		panic(err.Error())
+		log.Panic(err.Error())
 	} else if err = tmpl.Execute(tmplOut, getTemplateData()); err != nil {
-		panic(err.Error())
+		log.Panic(err.Error())
 	}
 }
