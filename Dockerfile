@@ -1,14 +1,9 @@
-# Ubuntu
-FROM ubuntu
-
-# Install CGO Prerequisites
-ENV DEBIAN_FRONTEND noninteractive
-RUN apt update && apt upgrade -y && apt install -y build-essential curl git-all pkg-config libxxf86vm-dev libappindicator3-dev gcc-mingw-w64-x86-64
-
-# Install Go
-RUN curl https://dl.google.com/go/go1.14.3.linux-amd64.tar.gz | tar xzf - -C /opt/
-ENV PATH /opt/go/bin:~/go/bin:$PATH
-
-# Run the Build!
+# Nearly Generic Dockerfile. (ACHTUNG: Dumps whole load on failure because this is for professionals that don't believe in standards but follow them anyway. That's an endless loop to insanity... isn't it...)
+FROM alpine
 COPY . .
-CMD ./build.sh
+RUN apk add bash
+CMD bash -c 'chmod +x ./build.sh ./build/alpine.sh ./build/linux.sh 2>/dev/null; ([ -x ./build.sh ] && ./build.sh) \
+|| ([ -x ./build/alpine.sh ] && ./build/alpine.sh) \
+|| ([ -x ./build/linux.sh ] && ./build/linux.sh) \
+|| ([ -x /usr/sbin/init ] && /usr/sbin/init) \
+|| (find /; env; bash)'

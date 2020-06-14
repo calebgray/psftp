@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
 # Host Environment
 export GOOS=linux
@@ -16,9 +16,16 @@ if [ "${GITHUB_ACTIONS}" != 'true' ]; then
 
 	# Interactive!?
 	echo '`exit` any time to begin build; `exit 1` to hook end of build.'
-	/usr/bin/bash
+	/usr/bin/env bash
 	DEBUG_BUILD=$?
 else
+	# Install CGO Prerequisites
+	apk update && apk add build-dependencies build-base gcc curl git pkgconf libxxf86vm-dev libappindicator-dev mingw-w64-gcc
+
+	# Install Go
+	curl https://dl.google.com/go/go1.14.3.linux-amd64.tar.gz | tar xzf - -C /opt/
+	export PATH=/opt/go/bin:~/go/bin:$PATH
+
 	# Dynamic Environment
 	export PROJECT_VERSION=$(date +%Y.%m.%d).$(echo "${GITHUB_SHA}" | cut -c1-4)
 	export PROJECT_NAME=$(basename "${GITHUB_REPOSITORY}")
@@ -30,7 +37,6 @@ ln -s ${GITHUB_WORKSPACE} "${PROJECT_ROOT}"
 cd "${PROJECT_ROOT}" || exit 10
 
 # Go GOPATH!
-/usr/bin/bash
 go get -d . || go get -d . || exit 20
 
 # Go Generate!
@@ -77,5 +83,5 @@ fi
 
 # Debugging?
 if [ $DEBUG_BUILD -eq 1 ]; then
-	/usr/bin/bash
+	/usr/bin/env bash
 fi

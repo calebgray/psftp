@@ -12,5 +12,5 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@master
-      - name: Upload
-        uses: ./
+      - name: Build
+        uses: calebgray/portapoo.action@master
